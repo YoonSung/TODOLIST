@@ -83,3 +83,25 @@ test("TODO 완료취소 테스트", function() {
 	//==========Then==========
 	equal(eLiTarget.className, "");
 });
+
+test("TODO 삭제 테스트", function() {
+	//==========Initialize==========
+	oTodo.init();
+	var eLiTarget;
+	var eDestroyButton;
+
+	//==========Given==========
+	oTodo.add();
+
+	eLiTarget = document.querySelector("#todo-list").children[0];
+	eDestroyButton = eLiTarget.querySelector(".destroy");
+
+	ok(eLiTarget !== undefined);
+
+	//==========When==========
+	fireEvent(eDestroyButton, "click");
+
+	//==========Then==========
+	eLiTarget = document.querySelector("#todo-list").children[0];
+	ok(eLiTarget === undefined);
+});

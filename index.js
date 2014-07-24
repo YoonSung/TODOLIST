@@ -56,6 +56,10 @@ var oTodo = {
 				eTargetLi.className = "completed";
 			}
 			
+		//Press Destroy Button
+		} else if (eClicked.tagName == "BUTTON") {
+			var eTargetLi = eClicked.parentNode.parentNode;
+			eTargetLi.parentNode.removeChild(eTargetLi);
 		}
 	}
 };
