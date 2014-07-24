@@ -1,10 +1,30 @@
+<!DOCTYPE html>
 <html>
 <head>
-        <script type="text/javascript" src="./lib/qunit.js"></script>
-        <link rel="stylesheet" type="text/css" href="./lib/qunit.css" />
+        <meta charset="utf-8">
+        <script type="text/javascript" src="./index.js"></script>
+        <link rel="stylesheet" type="text/css" href="./lib/qunit.css?v=1.14.0" />
 </head>
 <body>
         <div id="qunit"></div>
-        <div id="qunit-fixture"></div>
+        <div id="qunit-fixture">
+                <input id="new-todo"/>
+                <ul id="todo-list">
+                </ul>
+                <ul id="fake-todo-list">
+                </ul>
+        </div>
 </body>
+<script type="text/javascript" src="./lib/fireEvent.js"></script>
+<script type="text/javascript" src="./lib/qunit.js?v=1.14.0"></script>
+<script type="text/javascript" src="./test.js"></script>
+<script type="text/template" id="template-todo">
+        <li>
+                <div class="view">
+                        <input class="toggle" type="checkbox"/>
+                        <label>{}</label>
+                        <button class="destroy"></button>
+                </div>
+        </li>
+</script>
 </html> 
