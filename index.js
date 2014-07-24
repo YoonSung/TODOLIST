@@ -45,17 +45,17 @@ var oTodo = {
 		//e.target = trigger element
 		//e.currentTarget =  event binding element
 		var eClicked = e.target;
-		console.log(eClicked);
 
 		//Press Complete toggle
 		if (eClicked.tagName == "INPUT") {
 			var eTargetLi = eClicked.parentNode.parentNode;
 			
-			this.complete(eTargetLi);	
+			if (eTargetLi.className == "completed") {
+				eTargetLi.className = "";
+			} else {
+				eTargetLi.className = "completed";
+			}
+			
 		}
-	},
-
-	complete: function(eClickedLi) {
-		eClickedLi.className = "completed";
 	}
 };

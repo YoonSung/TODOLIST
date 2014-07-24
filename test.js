@@ -59,3 +59,27 @@ test("TODO 완료테스트", function() {
 	//==========Then==========
 	equal(eLiTarget.className, "completed");
 });
+
+test("TODO 완료취소 테스트", function() {
+	//==========Initialize==========
+	oTodo.init();
+	var eToggle;
+	var eLiTarget;
+	
+	//==========Given==========
+	oTodo.add();
+	eToggle = document.querySelector(".toggle");
+	console.log(eToggle);
+
+	eLiTarget = document.querySelector("#todo-list").children[0];
+	equal(eLiTarget.className, "");
+	
+	//==========When==========
+	fireEvent(eToggle,"click");	//press toggle. expected complete status
+	equal(eLiTarget.className, "completed");
+	
+	fireEvent(eToggle,"click"); //press toggle again. expected complete status cancled
+
+	//==========Then==========
+	equal(eLiTarget.className, "");
+});
