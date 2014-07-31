@@ -87,6 +87,7 @@ var oTodo = {
 		
 		if (opacity == 0) {
 			console.log(this.eList.removeChild(eAnimated));
+			this.eList.removeEventListener("click", this);
 		}
 	}
 };
