@@ -47,6 +47,8 @@ var oTodo = {
     	this.eList.insertAdjacentHTML('afterbegin', sTodo.replace(/{}/, sInput));
     	
     	this.eList.children[0].style.opacity = 0;
+
+    	//TODO Delete
     	this.eList.offsetHeight;
     	this.eList.children[0].style.opacity = 1;
     },

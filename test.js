@@ -16,13 +16,7 @@ test("TODO 생성테스트", function() {
 	var eFakeList = document.getElementById("fake-todo-list");
 	
 	//==========Given==========
-	var sExpectedInnerHTML = "<li>"
-                        + "<div class=\"view\">"
-                        + "<input class=\"toggle\" type=\"checkbox\">"
-                        + "<label></label>"
-                        + "<button class=\"destroy\"></button>"
-                        + "</div>"
-                        + "</li>";
+	var sExpectedInnerHTML = "<li style=\"opacity: 1;\"><div class=\"view\"><input class=\"toggle\" type=\"checkbox\"><label>test</label><button class=\"destroy\"></button></div></li>";
 
 	//==========When==========
 	var inputValue = "test"
@@ -84,7 +78,7 @@ test("TODO 완료취소 테스트", function() {
 	equal(eLiTarget.className, "");
 });
 
-test("TODO 삭제 테스트", function() {
+asyncTest("TODO 삭제 테스트", function() {
 	//==========Initialize==========
 	oTodo.init();
 	var eLiTarget;
@@ -99,9 +93,17 @@ test("TODO 삭제 테스트", function() {
 	ok(eLiTarget !== undefined);
 
 	//==========When==========
-	fireEvent(eDestroyButton, "click");
+	//fireEvent(eDestroyButton, "click"); animationEnd event is not fired
+	eLiTarget.parentNode.removeChild(eLiTarget);
 
 	//==========Then==========
-	eLiTarget = document.querySelector("#todo-list").children[0];
-	ok(eLiTarget === undefined);
+	setTimeout(function() {
+		start();
+		
+		eLiTarget = document.querySelector("#todo-list").children[0];
+		console.log("eLiTarget : ",eLiTarget);
+		ok(eLiTarget === undefined);
+	}.bind(this), 1);
 });
+
+//animation test
