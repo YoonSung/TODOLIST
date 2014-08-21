@@ -12,7 +12,7 @@ var mysql = require('mysql');
 var pool = mysql.createPool({
 	host		: '54.178.137.153',
 	user		: 'yoon',
-	database	: 'todo',
+	database	: 'html5',
 	charset		: 'UTF8_GENERAL_CI',
 	timezone	: 'local',
 	password	: 'sung'
@@ -52,11 +52,21 @@ function error404(response) {
 
 app.get('/', function(request, response) {
 	console.log("get!");
-	response.json({'test':"get"});
+
+	requestQuery(
+		"SELECT * FROM todo",
+		null,
+		function(err, aResult) {
+			console.log(aResult);
+			response.json(aResult);
+		}
+	);
+	//response.json({'test':"get"});
 });
 
 app.post('/', function(request, response) {
 	response.json("post");
+	//INSERT INTO todo(todo, created_date) values("Test Insert Data", NOW());
 });
 
 app.put('/', function(request, response) {
