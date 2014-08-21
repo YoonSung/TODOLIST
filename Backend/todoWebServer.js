@@ -21,6 +21,19 @@ var pool = mysql.createPool({
 
 //webserver
 var app = express();
+app.all('*', setHeader);
+
+function setHeader(request,response, next){
+    response.set({
+        "Access-Control-Allow-Origin" : "*",
+		"Access-Control-Allow-Headers" : "Content-Type",
+        "Access-Control-Allow-Credentials" : "true",
+        "Content-Type" : "application/json",
+        "Access-Control-Allow-Methods" : "GET, PUT, POST, DELETE"
+    });
+
+    next();
+}
 
 function isUndefinedOrNull(data) {
 	return (data === undefined || data === null)
@@ -38,7 +51,8 @@ function error404(response) {
 }
 
 app.get('/', function(request, response) {
-	response.json("get");
+	console.log("get!");
+	response.json({'test':"get"});
 });
 
 app.post('/', function(request, response) {
