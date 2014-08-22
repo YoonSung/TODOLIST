@@ -21,9 +21,8 @@ var pool = mysql.createPool({
 
 //webserver
 var app = express();
-app.all('*', setHeader);
 
-function setHeader(request,response, next){
+function setHeader(request,response){
     response.set({
         "Access-Control-Allow-Origin" : "*",
 		"Access-Control-Allow-Headers" : "Content-Type",
@@ -31,8 +30,6 @@ function setHeader(request,response, next){
         "Content-Type" : "application/json",
         "Access-Control-Allow-Methods" : "GET, PUT, POST, DELETE"
     });
-
-    next();
 }
 
 function isUndefinedOrNull(data) {
@@ -50,8 +47,12 @@ function error404(response) {
 	response.end();
 }
 
+function errorJson(response) {
+	response.json({"error": "error"});
+}
+
 app.get('/', function(request, response) {
-	console.log("get!");
+	setHeader(request, response);
 
 	requestQuery(
 		"SELECT * FROM todo",
@@ -65,16 +66,72 @@ app.get('/', function(request, response) {
 });
 
 app.post('/', function(request, response) {
-	response.json("post");
-	//INSERT INTO todo(todo, created_date) values("Test Insert Data", NOW());
+	setHeader(request, response);
+
+	if (!isUndefinedOrNull(request.body) && !isUndefinedOrNull(request.body.todo)) {
+		requestQuery(
+			"INSERT INTO todo(todo, created_date) values(?, NOW())",
+			[request.body.todo],
+			function(err, aResult) {
+				
+				if (err) {
+					errorJson(response);
+					return;			
+				}
+
+				response.json(aResult);
+			}
+		);	
+	} else {
+		errorJson(response);
+		return;
+	}
 });
 
 app.put('/', function(request, response) {
-	response.json("put");
+	setHeader(request, response);
+	
+	if (!isUndefinedOrNull(request.body) && !isUndefinedOrNull(request.body.id)) {
+		requestQuery(
+			"UPDATE todo SET completed = 1 WHERE id = ?",
+			[request.body.id],
+			function(err, oResult) {
+				
+				if (err) {
+					errorJson(response);
+					return;			
+				}
+
+				response.json(oResult);
+			}
+		);	
+	} else {
+		errorJson(response);
+		return;
+	}
 });
 
 app.delete('/', function(request, response) {
-	response.json("delete");
+	setHeader(request, response);
+	
+	if (!isUndefinedOrNull(request.body) && !isUndefinedOrNull(request.body.id)) {
+		requestQuery(
+			"DELETE FROM todo WHERE id = ?",
+			[request.body.id],
+			function(err, oResult) {
+				
+				if (err) {
+					errorJson(response);
+					return;			
+				}
+
+				response.json(oResult);
+			}
+		);	
+	} else {
+		errorJson(response);
+		return;
+	}
 });
 
 //Execute Query
