@@ -98,6 +98,17 @@ var oTodo = {
     },
 
     delete: function(id) {
+
+    	oTodoSync.delete(id, function(oResult) {
+    		if (oResult["affectedRows"] == 1) {
+
+    			var eTargetLi = document.querySelector('li[data-id="' + id + '"]');
+				console.log(this.eList.removeChild(eTargetLi));
+				this.eList.removeEventListener("click", this);
+    		} else {
+    			alert ("Sorry! UnExpected Error Occur!! Please Try Again");
+    		}
+    	}.bind(this));
     },
 
     clickList: function(e) {
@@ -128,8 +139,7 @@ var oTodo = {
 		var opacity = eAnimated.style.opacity;
 		
 		if (opacity == 0) {
-			console.log(this.eList.removeChild(eAnimated));
-			this.eList.removeEventListener("click", this);
+			oTodo.delete(e.target.dataset.id);
 		}
 	}
 };
