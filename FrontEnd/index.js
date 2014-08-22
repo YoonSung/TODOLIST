@@ -60,9 +60,7 @@ var oTodo = {
 
 		sTodoTemplate = sTodoTemplate.replace(/{id}/, id);
     	sTodoTemplate = sTodoTemplate.replace(/{todo}/, sTodo);
-
-    	console.log(0 || oUtil.isUndefinedOrNull(isCompleted));
-    	console.log(sTodoTemplate);
+    	
     	sTodoTemplate = ( (isCompleted) == 0 || oUtil.isUndefinedOrNull(isCompleted) ? 
     		//if true
     		sTodoTemplate
@@ -86,6 +84,22 @@ var oTodo = {
     	}
     },
 
+    complete: function(id) {
+
+    	oTodoSync.complete(id, function(oResult) {
+			if (oResult["affectedRows"] == 1) {
+				var eTargetLi = document.querySelector('li[data-id="' + id + '"]');
+				eTargetLi.className = (eTargetLi.className == "completed") ? "" : "completed";
+
+    		} else {
+    			alert ("Sorry! UnExpected Error Occur!! Please Try Again");
+    		}
+		});
+    },
+
+    delete: function(id) {
+    },
+
     clickList: function(e) {
 
 		//e.target = trigger element
@@ -95,12 +109,7 @@ var oTodo = {
 		//Press Complete toggle
 		if (eClicked.tagName == "INPUT") {
 			var eTargetLi = eClicked.parentNode.parentNode;
-			
-			if (eTargetLi.className == "completed") {
-				eTargetLi.className = "";
-			} else {
-				eTargetLi.className = "completed";
-			}
+			this.complete(eTargetLi.dataset.id);
 			
 		//Press Destroy Button
 		} else if (eClicked.tagName == "BUTTON") {
@@ -127,16 +136,38 @@ var oTodo = {
 
 var oTodoSync = {
 	getAll: function(callback) {
-		this.xhr("get", "http://localhost:8080/", null, function(aResult) {
+		this.xhr("GET", "http://localhost:8080/", null, function(aResult) {
 			callback(aResult);
 		});
 	},
 
 	add: function(sTodo, callback) {
 		this.xhr(
-			"post", 
+			"POST", 
 			"http://localhost:8080/", 
 			"todo="+sTodo, 
+			function(oResult) {
+				callback(oResult);
+			}	
+		);
+	},
+
+	complete: function(id, callback) {
+		this.xhr(
+			"PUT", 
+			"http://localhost:8080/", 
+			"id="+id, 
+			function(oResult) {
+				callback(oResult);
+			}	
+		);
+	},
+
+	delete: function(id, callback) {
+		this.xhr(
+			"DELETE", 
+			"http://localhost:8080/", 
+			"id="+id, 
 			function(oResult) {
 				callback(oResult);
 			}	
@@ -161,7 +192,6 @@ function init() {
 	oTodo.init();
 
 	oTodoSync.getAll(function(aTodo) {
-		console.log(aTodo);
 		for(var i = 0 ; i < aTodo.length ; ++i) {
 			oTodo.add(aTodo[i]["id"], aTodo[i]["todo"], aTodo[i]["completed"], false);
 			//oTodo.add(aTodo[i]["id"], aTodo[i]["todo"], true, false);

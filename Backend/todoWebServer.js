@@ -28,7 +28,7 @@ function setHeader(request,response){
 		"Access-Control-Allow-Headers" : "Content-Type",
         "Access-Control-Allow-Credentials" : "true",
         "Content-Type" : "application/json",
-        "Access-Control-Allow-Methods" : "GET, PUT, POST, DELETE"
+        "Access-Control-Allow-Methods" : "GET, PUT, POST, DELETE, OPTIONS"
     });
 }
 
@@ -38,6 +38,9 @@ function isUndefinedOrNull(data) {
 
 //for parsing request data
 app.use(express.bodyParser());
+
+//console log to every Request
+app.use(express.logger('dev'));
 
 function error404(response) {
 	response.writeHead(404, {
@@ -88,12 +91,21 @@ app.post('/', function(request, response) {
 	}
 });
 
+app.options('/', function(request, response) {
+	setHeader(request, response);
+	var method = request.headers["access-control-request-method"];
+	console.log(method);
+
+	//TODO User Check
+	response.send();
+});
+
 app.put('/', function(request, response) {
 	setHeader(request, response);
 	
 	if (!isUndefinedOrNull(request.body) && !isUndefinedOrNull(request.body.id)) {
 		requestQuery(
-			"UPDATE todo SET completed = 1 WHERE id = ?",
+			"UPDATE todo SET completed = '1' WHERE id = ?",
 			[request.body.id],
 			function(err, oResult) {
 				
@@ -113,7 +125,7 @@ app.put('/', function(request, response) {
 
 app.delete('/', function(request, response) {
 	setHeader(request, response);
-	
+
 	if (!isUndefinedOrNull(request.body) && !isUndefinedOrNull(request.body.id)) {
 		requestQuery(
 			"DELETE FROM todo WHERE id = ?",
