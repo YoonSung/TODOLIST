@@ -14,8 +14,7 @@ var oTodo = {
 
 			//if Press Enter Key
 			if (e.keyCode === 13) {
-				this.add();
-				this.eInput.value = "";
+				this.create(this.eInput.value, true);
     		}
     	}.bind(this));
 
@@ -37,20 +36,54 @@ var oTodo = {
     	this.eventHandler();
     },
 
-    add: function() {
+    create: function(sTodo, isAnimation) {
+    	oTodoSync.add(sTodo, function(oResult) {
 
-    	var sInput = this.eInput.value;
-    	if (oUtil.isUndefinedOrNull(sInput))
+    		if (oResult["affectedRows"] == 1) {
+    			this.add(oResult["insertId"], sTodo, false, isAnimation);
+    			this.eInput.value = "";
+    		} else {
+    			alert ("Sorry! UnExpected Error Occur!! Please Try Again");
+    		}
+    		
+    	}.bind(this));
+    },
+
+    add: function(id, sTodo, isCompleted, isAnimation) {
+    	if (oUtil.isUndefinedOrNull(sTodo))
     		return;
 
-    	var sTodo = this.eTodoTemplate.innerText;
-    	this.eList.insertAdjacentHTML('afterbegin', sTodo.replace(/{}/, sInput));
-    	
-    	this.eList.children[0].style.opacity = 0;
+    	var sTodoTemplate = this.eTodoTemplate.innerText;
 
-    	//TODO Delete
-    	this.eList.offsetHeight;
-    	this.eList.children[0].style.opacity = 1;
+    	if (oUtil.isUndefinedOrNull(id))
+    		id = 0;
+
+		sTodoTemplate = sTodoTemplate.replace(/{id}/, id);
+    	sTodoTemplate = sTodoTemplate.replace(/{todo}/, sTodo);
+
+    	console.log(0 || oUtil.isUndefinedOrNull(isCompleted));
+    	console.log(sTodoTemplate);
+    	sTodoTemplate = ( (isCompleted) == 0 || oUtil.isUndefinedOrNull(isCompleted) ? 
+    		//if true
+    		sTodoTemplate
+    			.replace(/{completed}/, "")
+    			.replace(/{checked}/, "")
+    		: 
+    		//if false
+    		sTodoTemplate
+    			.replace(/{completed}/, "completed")
+    			.replace(/{checked}/, "checked")
+    	);
+  		
+
+    	this.eList.insertAdjacentHTML('afterbegin', sTodoTemplate);
+    	
+    	if (isAnimation == true) {
+    		this.eList.children[0].style.opacity = 0;
+    		//TODO Delete
+    		this.eList.offsetHeight;
+    		this.eList.children[0].style.opacity = 1;
+    	}
     },
 
     clickList: function(e) {
@@ -91,3 +124,47 @@ var oTodo = {
 		}
 	}
 };
+
+var oTodoSync = {
+	getAll: function(callback) {
+		this.xhr("get", "http://localhost:8080/", null, function(aResult) {
+			callback(aResult);
+		});
+	},
+
+	add: function(sTodo, callback) {
+		this.xhr(
+			"post", 
+			"http://localhost:8080/", 
+			"todo="+sTodo, 
+			function(oResult) {
+				callback(oResult);
+			}
+		);
+	},
+
+	xhr: function(method, url, parameter, callback) {
+		var xhr = new XMLHttpRequest();
+		xhr.open(method, url, true);
+		xhr.onload = function() {
+			callback(JSON.parse(xhr.responseText));
+		}
+
+		xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded; charset=UTF-8");
+		//xhr.load
+		xhr.send(parameter);
+	},
+};
+
+function init() {
+	oTodoSync.getAll(function(aTodo) {
+		console.log(aTodo);
+		for(var i = 0 ; i < aTodo.length ; ++i) {
+			//oTodo.add(aTodo[i]["id"], aTodo[i]["todo"], aTodo[i]["completed"], false);
+			oTodo.add(aTodo[i]["id"], aTodo[i]["todo"], true, false);
+		}
+	});
+}
+
+init();
+
