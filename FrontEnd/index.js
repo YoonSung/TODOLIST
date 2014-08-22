@@ -139,7 +139,7 @@ var oTodoSync = {
 			"todo="+sTodo, 
 			function(oResult) {
 				callback(oResult);
-			}
+			}	
 		);
 	},
 
@@ -157,14 +157,14 @@ var oTodoSync = {
 };
 
 function init() {
+
+	oTodo.init();
+
 	oTodoSync.getAll(function(aTodo) {
 		console.log(aTodo);
 		for(var i = 0 ; i < aTodo.length ; ++i) {
-			//oTodo.add(aTodo[i]["id"], aTodo[i]["todo"], aTodo[i]["completed"], false);
-			oTodo.add(aTodo[i]["id"], aTodo[i]["todo"], true, false);
+			oTodo.add(aTodo[i]["id"], aTodo[i]["todo"], aTodo[i]["completed"], false);
+			//oTodo.add(aTodo[i]["id"], aTodo[i]["todo"], true, false);
 		}
 	});
 }
-
-init();
-
