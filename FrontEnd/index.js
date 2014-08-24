@@ -64,8 +64,17 @@ var Todo = {
 				var href = eTarget.getAttribute("href");
 				href = href.substring(0,1).toUpperCase() + href.substring(1,href.length);
 
-				this.changeFilterStatus(this.aFilter.indexOf(eTarget));
 				this["show"+href]();
+				history.pushState({"filter": href}, href, href);
+			}
+		}.bind(this));
+
+		window.addEventListener("popstate",function(e){
+			if (e.state) {
+				this["show"+e.state.filter]();
+
+			} else {
+				this.showAll();
 			}
 		}.bind(this));
 
@@ -81,14 +90,17 @@ var Todo = {
 
 	showAll: function() {
 		this.eList.className = "";
+		this.changeFilterStatus(0);
+	},
+	
+	showActive: function() {
+		this.eList.className = "all-active";
+		this.changeFilterStatus(1);
 	},
 
 	showCompleted: function() {
 		this.eList.className = "all-completed";
-	},
-
-	showActive: function() {
-		this.eList.className = "all-active";
+		this.changeFilterStatus(2);
 	},
 
     create: function(sTodo, isAnimation) {
