@@ -299,6 +299,18 @@ label[for='toggle-all'] {
 	margin-bottom: -1px;
 }
 
+#todo-list.all-active .completed {
+	display: none;
+}
+
+#todo-list.all-completed li {
+	display: none;
+}
+
+#todo-list.all-completed li.completed {
+	display: inline-block;
+}
+
 #footer {
 	color: #777;
 	padding: 0 15px;

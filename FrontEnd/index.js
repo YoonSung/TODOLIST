@@ -80,15 +80,15 @@ var Todo = {
 	},
 
 	showAll: function() {
-		console.log("showAll");
+		this.eList.className = "";
 	},
 
 	showCompleted: function() {
-		console.log("showCompleted");
+		this.eList.className = "all-completed";
 	},
 
 	showActive: function() {
-		console.log("showActive");
+		this.eList.className = "all-active";
 	},
 
     create: function(sTodo, isAnimation) {
