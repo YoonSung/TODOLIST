@@ -308,7 +308,7 @@ label[for='toggle-all'] {
 }
 
 #todo-list.all-completed li.completed {
-	display: inline-block;
+	display: block;
 }
 
 #footer {

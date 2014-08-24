@@ -193,6 +193,109 @@ var Todo = {
 };
 
 var TodoSync = {
+	storage: null,
+
+	init: function() {
+
+		//init localStorage API
+		this.storage = localStorage;
+		this.storage.clear();
+
+		window.addEventListener("online", this.online.bind(this));
+	},
+
+	online: function() {
+		
+		console.log(this.storage);
+
+		var length = this.storage.length;
+
+		/*
+			{
+				"method": method,
+				"url": url,
+				"parameter": parameter
+			}
+		*/
+		var oRequest = null;
+
+		var method = null;
+		var url = null;
+		var parameter = null;
+
+		if (length > 0) {
+
+			var nIndex = 0;
+
+			for (var i = 0 ; i < length ; ++i) {
+				oRequest = JSON.parse(this.storage.getItem(i));
+				console.log(oRequest);
+
+				method = oRequest["method"];
+				url = oRequest["url"];
+				parameter = oRequest["parameter"];
+
+				//When COMPLETE, DELETE
+				//need check id (When delete, complete request By offline Object)
+				//
+				//CONDITION
+				//1. is not undefined or null
+				//2. parameter is startWith ("id=")
+				if (!Util.isUndefinedOrNull(parameter) && parameter.substring(0, "id=".length).indexOf("id=") > -1) {
+					var requestId = parameter.replace("id=", "");
+
+					//Id is Generated at offline Status
+					if (requestId < 0) {
+						//get RequestData From localStorage, this data is Already modified 
+						//(COMPLETE , DELETE Request cannot be located in before CREATE)
+						var sRequestData = this.storage.getItem(-1 * requestId);
+						var oData = JSON.parse(sRequestData);
+
+						var nLimit = 5;
+
+						while(oData["id"] == null && requestDatanLimit > 0 ) {
+							setTimeout(function() {
+								sRequestData = this.storage.getItem(-1 * requestId);
+								oData = JSON.parse(sRequestData);
+							}.bind(this), 500);
+						}
+
+						parameter = "id="+oData.id;
+					}
+				}
+				console.log("parameter : "+parameter);
+				this.xhr(method, url, parameter, function(oResult) {
+					//TODO Catch Exception When XHR Failed!
+					console.log(arguments);
+					console.log("nIndex : ",nIndex);
+
+					//
+					if (oResult["insertId"] !== 0) {
+						//When Create Request And Get InsertId
+						//Element DataSet Change, 
+						//Change LocalStorage Data For If Exists UPDATE or REMOVE request later
+						console.log("insertId : ",oResult["insertId"]);
+						console.log('li[data-id="' + (-1 * nIndex) + '"]');
+						var eTarget = document.querySelector('li[data-id="' + (-1 * nIndex) + '"]');
+						console.log("eTarget : ",eTarget);
+
+						eTarget.dataset.id = oResult["insertId"];
+						console.log("eTarget : "+eTarget);
+						oRequest["id"] = oResult["insertId"];
+
+						console.log("update oRequest : "+oRequest);
+						this.storage[nIndex] = JSON.stringify(oRequest);
+						++nIndex;
+					}
+
+				}.bind(this));
+
+			}
+		}
+
+		this.storage.clear();
+	},
+
 	getAll: function(callback) {
 		this.xhr("GET", "http://localhost:8080/", null, function(aResult) {
 			callback(aResult);
@@ -233,21 +336,48 @@ var TodoSync = {
 	},
 
 	xhr: function(method, url, parameter, callback) {
-		var xhr = new XMLHttpRequest();
-		xhr.open(method, url, true);
-		xhr.onload = function() {
-			callback(JSON.parse(xhr.responseText));
+		console.log(arguments);
+		if (navigator.onLine) {
+			var xhr = new XMLHttpRequest();
+			xhr.open(method, url, false);
+			xhr.onload = function() {
+				callback(JSON.parse(xhr.responseText));
+			}
+
+			xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded; charset=UTF-8");
+			//xhr.load
+			xhr.send(parameter);
+
+		} else {
+
+			var length = this.storage.length;
+
+			this.storage.setItem(
+				//parameter1
+				length,
+
+				//parameter2
+				JSON.stringify({
+					"method": method,
+					"url": url,
+					"parameter": parameter,
+					"id": null,
+				})
+			);
+
+			callback({
+				"affectedRows": 1,
+				"insertId": -1 * length
+			});
 		}
 
-		xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded; charset=UTF-8");
-		//xhr.load
-		xhr.send(parameter);
 	},
 };
 
 function init() {
 
 	Todo.init();
+	TodoSync.init();
 
 	TodoSync.getAll(function(aTodo) {
 		for(var i = 0 ; i < aTodo.length ; ++i) {
