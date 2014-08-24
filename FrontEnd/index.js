@@ -8,6 +8,24 @@ var Todo = {
 	eList: null,
 	eInput: null,
 	eTodoTemplate : null,
+	aFilter: [],
+	nLastFilterIndex: 0,
+
+    init: function() {
+    	this.eList = document.getElementById("todo-list");
+    	this.eInput = document.getElementById("new-todo");
+    	this.eTodoTemplate = document.getElementById("template-todo");
+    	
+    	//querySelectorAll Result is not array. convert list to array
+		var filterList = document.querySelectorAll("#filters a");
+		var length = filterList.length
+		for(var i = 0 ; i < length ; ++i) {
+			this.aFilter.push(filterList[i]);
+		}
+
+    	console.log(this.aFilter);
+    	this.eventHandler();
+    },
 
 	eventHandler: function() {
 		this.eInput.addEventListener("keydown", function(e) {
@@ -18,39 +36,60 @@ var Todo = {
     		}
     	}.bind(this));
 
+		//Entire Todo's ROOT Element Events. Delegate EventCall
 		this.eList.addEventListener("click", function(e) {
 			//e.target = trigger element
 			//e.currentTarget =  event binding element
 			var eClicked = e.target;
 
 			//Press Complete toggle
-			if (eClicked.tagName == "INPUT") {
+			if (eClicked.tagName.toLowerCase() === "input") {
 				var eTargetLi = eClicked.parentNode.parentNode;
 				this.complete(eTargetLi.dataset.id);
 				
 			//Press Destroy Button
-			} else if (eClicked.tagName == "BUTTON") {
+			} else if (eClicked.tagName.toLowerCase() === "button") {
 				var eTargetLi = eClicked.parentNode.parentNode;
 				eTargetLi.style.opacity = 0;
 				
 			}
 		}.bind(this));
 
-		/*
-		TODO Browser Detection
-		TODO Animation Test
-		https://developer.mozilla.org/en-US/docs/Web/Events/transitionend
-    	*/
+		//Filters Root Object
+		document.getElementById("filters").addEventListener("click", function(e) {
+			e.preventDefault();
+
+			var eTarget = e.target;
+			if (eTarget.tagName.toLowerCase() === "a") {
+				var href = eTarget.getAttribute("href");
+				href = href.substring(0,1).toUpperCase() + href.substring(1,href.length);
+
+				this.changeFilterStatus(this.aFilter.indexOf(eTarget));
+				this["show"+href]();
+			}
+		}.bind(this));
+
+		//Delete Todo When AnimationEnd
     	this.eList.addEventListener("webkitTransitionEnd", this.animationEnd.bind(this));
 	},
 
-    init: function() {
-    	this.eList = document.getElementById("todo-list");
-    	this.eInput = document.getElementById("new-todo");
-    	this.eTodoTemplate = document.getElementById("template-todo");
+	changeFilterStatus: function(clickedFilterIndex) {
+		this.aFilter[this.nLastFilterIndex].className = "";
+		this.aFilter[clickedFilterIndex].className = "selected";
+		this.nLastFilterIndex = clickedFilterIndex;
+	},
 
-    	this.eventHandler();
-    },
+	showAll: function() {
+		console.log("showAll");
+	},
+
+	showCompleted: function() {
+		console.log("showCompleted");
+	},
+
+	showActive: function() {
+		console.log("showActive");
+	},
 
     create: function(sTodo, isAnimation) {
     	TodoSync.add(sTodo, function(oResult) {
@@ -130,7 +169,7 @@ var Todo = {
 	animationEnd: function(e) {
 		var eAnimated = e.target;
 
-		if (eAnimated.tagName !== "LI")
+		if (eAnimated.tagName.toLowerCase() !== "li")
 			return;
 
 		var opacity = eAnimated.style.opacity;
