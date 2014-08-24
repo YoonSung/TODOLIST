@@ -1,10 +1,10 @@
-var oUtil = {
+var Util = {
 	isUndefinedOrNull: function(value) {
 		return (value === undefined || value === null);
 	}
 };
 
-var oTodo = {
+var Todo = {
 	eList: null,
 	eInput: null,
 	eTodoTemplate : null,
@@ -18,7 +18,23 @@ var oTodo = {
     		}
     	}.bind(this));
 
-		this.eList.addEventListener("click", this.clickList.bind(this));
+		this.eList.addEventListener("click", function(e) {
+			//e.target = trigger element
+			//e.currentTarget =  event binding element
+			var eClicked = e.target;
+
+			//Press Complete toggle
+			if (eClicked.tagName == "INPUT") {
+				var eTargetLi = eClicked.parentNode.parentNode;
+				this.complete(eTargetLi.dataset.id);
+				
+			//Press Destroy Button
+			} else if (eClicked.tagName == "BUTTON") {
+				var eTargetLi = eClicked.parentNode.parentNode;
+				eTargetLi.style.opacity = 0;
+				
+			}
+		}.bind(this));
 
 		/*
 		TODO Browser Detection
@@ -37,7 +53,7 @@ var oTodo = {
     },
 
     create: function(sTodo, isAnimation) {
-    	oTodoSync.add(sTodo, function(oResult) {
+    	TodoSync.add(sTodo, function(oResult) {
 
     		if (oResult["affectedRows"] == 1) {
     			this.add(oResult["insertId"], sTodo, false, isAnimation);
@@ -50,18 +66,18 @@ var oTodo = {
     },
 
     add: function(id, sTodo, isCompleted, isAnimation) {
-    	if (oUtil.isUndefinedOrNull(sTodo))
+    	if (Util.isUndefinedOrNull(sTodo))
     		return;
 
     	var sTodoTemplate = this.eTodoTemplate.innerText;
 
-    	if (oUtil.isUndefinedOrNull(id))
+    	if (Util.isUndefinedOrNull(id))
     		id = 0;
 
 		sTodoTemplate = sTodoTemplate.replace(/{id}/, id);
     	sTodoTemplate = sTodoTemplate.replace(/{todo}/, sTodo);
     	
-    	sTodoTemplate = ( (isCompleted) == 0 || oUtil.isUndefinedOrNull(isCompleted) ? 
+    	sTodoTemplate = ( (isCompleted) == 0 || Util.isUndefinedOrNull(isCompleted) ? 
     		//if true
     		sTodoTemplate
     			.replace(/{completed}/, "")
@@ -86,7 +102,7 @@ var oTodo = {
 
     complete: function(id) {
 
-    	oTodoSync.complete(id, function(oResult) {
+    	TodoSync.complete(id, function(oResult) {
 			if (oResult["affectedRows"] == 1) {
 				var eTargetLi = document.querySelector('li[data-id="' + id + '"]');
 				eTargetLi.className = (eTargetLi.className == "completed") ? "" : "completed";
@@ -99,7 +115,7 @@ var oTodo = {
 
     delete: function(id) {
 
-    	oTodoSync.delete(id, function(oResult) {
+    	TodoSync.delete(id, function(oResult) {
     		if (oResult["affectedRows"] == 1) {
 
     			var eTargetLi = document.querySelector('li[data-id="' + id + '"]');
@@ -111,25 +127,6 @@ var oTodo = {
     	}.bind(this));
     },
 
-    clickList: function(e) {
-
-		//e.target = trigger element
-		//e.currentTarget =  event binding element
-		var eClicked = e.target;
-
-		//Press Complete toggle
-		if (eClicked.tagName == "INPUT") {
-			var eTargetLi = eClicked.parentNode.parentNode;
-			this.complete(eTargetLi.dataset.id);
-			
-		//Press Destroy Button
-		} else if (eClicked.tagName == "BUTTON") {
-			var eTargetLi = eClicked.parentNode.parentNode;
-			eTargetLi.style.opacity = 0;
-			
-		}
-	},
-
 	animationEnd: function(e) {
 		var eAnimated = e.target;
 
@@ -139,12 +136,12 @@ var oTodo = {
 		var opacity = eAnimated.style.opacity;
 		
 		if (opacity == 0) {
-			oTodo.delete(e.target.dataset.id);
+			Todo.delete(e.target.dataset.id);
 		}
 	}
 };
 
-var oTodoSync = {
+var TodoSync = {
 	getAll: function(callback) {
 		this.xhr("GET", "http://localhost:8080/", null, function(aResult) {
 			callback(aResult);
@@ -199,12 +196,12 @@ var oTodoSync = {
 
 function init() {
 
-	oTodo.init();
+	Todo.init();
 
-	oTodoSync.getAll(function(aTodo) {
+	TodoSync.getAll(function(aTodo) {
 		for(var i = 0 ; i < aTodo.length ; ++i) {
-			oTodo.add(aTodo[i]["id"], aTodo[i]["todo"], aTodo[i]["completed"], false);
-			//oTodo.add(aTodo[i]["id"], aTodo[i]["todo"], true, false);
+			Todo.add(aTodo[i]["id"], aTodo[i]["todo"], aTodo[i]["completed"], false);
+			//Todo.add(aTodo[i]["id"], aTodo[i]["todo"], true, false);
 		}
 	});
 }
