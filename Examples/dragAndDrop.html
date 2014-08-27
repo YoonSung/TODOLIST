@@ -9,8 +9,13 @@
 
 	function enter(e) {
 		console.log("enter, id = ", e.target.id);
+		e.target.classList.add("over");
 	};
 
+
+	/*
+	dragenter is used to toggle the 'over' class instead of the dragover. If we were to use dragover, our CSS class would be toggled many times as the event dragover continued to fire on a column hover. Ultimately, that would cause the browser's renderer to do a large amount of unnecessary work. Keeping redraws to a minimum is always a good idea.
+	*/
 	function over(e) {
 		console.log("over, id = ", e.target.id);
 	};
@@ -22,6 +27,7 @@
 
 	function leave(e) {
 		console.log("leave, id = ", e.target.id);
+		e.target.classList.remove('over');
 	};
 
 	function drag(e) {
@@ -43,7 +49,7 @@
 		console.log(eUL);
 		eUL.addEventListener("dragstart", start);
 		eUL.addEventListener("dragenter", enter);
-		eUL.addEventListener("dragover", over);
+		//eUL.addEventListener("dragover", over);
 		eUL.addEventListener("dragend", end);
 		eUL.addEventListener("dragleave", leave);
 		eUL.addEventListener("drag", drag);
@@ -75,6 +81,10 @@
 		margin: 10px;
 		text-align: center;
 		vertical-align: middle;
+	}
+
+	li.over {
+		border: 2px dashed #000;
 	}
 </style>
 <body>
