@@ -5,11 +5,18 @@
 
 	function start(e) {
 		console.log("start, id = ", e.target.id);
+		
+		e.dataTransfer.setData("text/plain", e.target.id);
 	};
 
 	function enter(e) {
-		console.log("enter, id = ", e.target.id);
+		console.log("enter, id = ", ""+e.target.id);
 		e.target.classList.add("over");
+		console.log(e.dataTransfer);
+
+		// if (e.target.previousElementSibling !== null)
+		// 	e.target.previousElementSibling.innerHTML = e.target.innerHTML;
+
 	};
 
 
@@ -17,7 +24,7 @@
 	dragenter is used to toggle the 'over' class instead of the dragover. If we were to use dragover, our CSS class would be toggled many times as the event dragover continued to fire on a column hover. Ultimately, that would cause the browser's renderer to do a large amount of unnecessary work. Keeping redraws to a minimum is always a good idea.
 	*/
 	function over(e) {
-		console.log("over, id = ", e.target.id);
+		e.preventDefault();
 	};
 
 	function end(e) {
@@ -30,12 +37,19 @@
 		e.target.classList.remove('over');
 	};
 
-	function drag(e) {
-		console.log("drag, id = ", e.target.id);
-	};
-
 	function drop(e) {
 		console.log("drop, id = ", e.target.id);
+		e.stopPropagation(); // Stops some browsers from redirecting.
+  		e.preventDefault();
+
+  		var nSourceId = e.dataTransfer.getData("text/plain");
+  		var eSource = document.getElementById(nSourceId);
+
+  		console.log("eSource : ",eSource);
+
+  		eSource.parentNode.insertBefore(eSource, e.target);
+
+  		//console.log("test", e.dataTransfer.getData("text/html"));
 	};
 
 	document.addEventListener("DOMContentLoaded", function() {
@@ -49,11 +63,10 @@
 		console.log(eUL);
 		eUL.addEventListener("dragstart", start);
 		eUL.addEventListener("dragenter", enter);
-		//eUL.addEventListener("dragover", over);
-		eUL.addEventListener("dragend", end);
+		eUL.addEventListener("dragover", over);
 		eUL.addEventListener("dragleave", leave);
-		eUL.addEventListener("drag", drag);
 		eUL.addEventListener("drop", drop);
+		eUL.addEventListener("dragend", end);
 
 	});
 </script>
