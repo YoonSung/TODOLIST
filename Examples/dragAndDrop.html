@@ -1,5 +1,97 @@
 <!DOCTYPE HTML>
 <html>
+<meta charset="utf-8"/>
+<script>
+
+	function start(e) {
+		console.log("start, id = ", e.target.id);
+	};
+
+	function enter(e) {
+		console.log("enter, id = ", e.target.id);
+	};
+
+	function over(e) {
+		console.log("over, id = ", e.target.id);
+	};
+
+	function end(e) {
+		console.log("end, id = ", e.target.id);
+	};
+
+
+	function leave(e) {
+		console.log("leave, id = ", e.target.id);
+	};
+
+	function drag(e) {
+		console.log("drag, id = ", e.target.id);
+	};
+
+	function drop(e) {
+		console.log("drop, id = ", e.target.id);
+	};
+
+	document.addEventListener("DOMContentLoaded", function() {
+		var nodeList = document.getElementsByTagName("li");
+
+		for(var i = 0 ; i < nodeList.length ; ++i) {
+			console.log(nodeList[i].id);
+		}
+
+		var eUL = document.getElementsByTagName("ul")[0];
+		console.log(eUL);
+		eUL.addEventListener("dragstart", start);
+		eUL.addEventListener("dragenter", enter);
+		eUL.addEventListener("dragover", over);
+		eUL.addEventListener("dragend", end);
+		eUL.addEventListener("dragleave", leave);
+		eUL.addEventListener("drag", drag);
+		eUL.addEventListener("drop", drop);
+
+	});
+</script>
+<style>
+	li[draggable] {
+	  -moz-user-select: none;
+	  -khtml-user-select: none;
+	  -webkit-user-select: none;
+	  user-select: none;
+	  /* Required to make elements draggable in old WebKit */
+	  -khtml-user-drag: element;
+	  -webkit-user-drag: element;
+	}
+	ul {
+		padding: 100px;
+		border: 12px solid black;
+	}
+
+	li {
+		cursor: move;
+		border: 1px dotted pink;
+		width: 100px;
+		height: 50px;
+		list-style-type: none;
+		margin: 10px;
+		text-align: center;
+		vertical-align: middle;
+	}
+</style>
+<body>
+<ul>
+<li id="1" draggable="true">테스트1</li>
+<li id="2" draggable="true">테스트2</li>
+<li id="3" draggable="true">테스트3</li>
+<li id="4" draggable="true">테스트4</li>
+<li id="5" draggable="true">테스트5</li>
+</ul>
+</body>
+</html>
+
+
+<!--
+<!DOCTYPE HTML>
+<html>
 <head>
 <style>
 #div1 {width:350px;height:70px;padding:10px;border:1px solid #aaaaaa;}
@@ -30,3 +122,4 @@ function drop(ev) {
 ondragstart="drag(event)" width="336" height="69">
 </body>
 </html>
+-->
