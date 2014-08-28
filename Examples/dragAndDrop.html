@@ -2,23 +2,55 @@
 <html>
 <meta charset="utf-8"/>
 <script>
+	
+	var eTarget = null;
+	var eNext = null;
 
 	function start(e) {
 		console.log("start, id = ", e.target.id);
 		
-		e.dataTransfer.setData("text/plain", e.target.id);
+		//e.dataTransfer.setData("text/plain", e.target.id);
+		eTarget = e.target;
 	};
 
 	function enter(e) {
-		console.log("enter, id = ", ""+e.target.id);
-		e.target.classList.add("over");
-		console.log(e.dataTransfer);
+		console.log("enter, id = ", e.target.id);
+		
+		e.target.classList.add("over");		
 
-		// if (e.target.previousElementSibling !== null)
-		// 	e.target.previousElementSibling.innerHTML = e.target.innerHTML;
+		eNext = null;
 
+		if (e.target.tagName.toLowerCase() !== "li")
+			return;
+
+		//approach from downward
+		if (Math.abs(e.pageY - findY(e.target)) > 20) {
+			eNext = e.target;
+		
+			if (eNext == eTarget)
+				eNext = null;
+
+		//approach from upward
+		} else {
+			eNext = e.target.previousElementSibling;
+
+			if (eNext == eTarget)
+				eNext = null;
+		}
+
+		 (eNext == null) ? null :eNext.classList.add("move");
 	};
 
+	function findY(ele) {
+		var top = 0;
+		if (ele.offsetParent) {
+			do {
+				top += ele.offsetTop;
+			} while (ele = ele.offsetParent);
+		}
+		return top;
+	//returns an array
+	}
 
 	/*
 	dragenter is used to toggle the 'over' class instead of the dragover. If we were to use dragover, our CSS class would be toggled many times as the event dragover continued to fire on a column hover. Ultimately, that would cause the browser's renderer to do a large amount of unnecessary work. Keeping redraws to a minimum is always a good idea.
@@ -35,32 +67,24 @@
 	function leave(e) {
 		console.log("leave, id = ", e.target.id);
 		e.target.classList.remove('over');
+		e.target.classList.remove('move');
+		e.target.offsetHeight;
 	};
 
 	function drop(e) {
-		console.log("drop, id = ", e.target.id);
 		e.stopPropagation(); // Stops some browsers from redirecting.
   		e.preventDefault();
 
-  		var nSourceId = e.dataTransfer.getData("text/plain");
-  		var eSource = document.getElementById(nSourceId);
-
-  		console.log("eSource : ",eSource);
-
-  		eSource.parentNode.insertBefore(eSource, e.target);
+  		console.log("eNext : ",eNext);
+  		eTarget.parentNode.insertBefore(eTarget, eNext);
 
   		//console.log("test", e.dataTransfer.getData("text/html"));
 	};
 
 	document.addEventListener("DOMContentLoaded", function() {
 		var nodeList = document.getElementsByTagName("li");
-
-		for(var i = 0 ; i < nodeList.length ; ++i) {
-			console.log(nodeList[i].id);
-		}
-
 		var eUL = document.getElementsByTagName("ul")[0];
-		console.log(eUL);
+
 		eUL.addEventListener("dragstart", start);
 		eUL.addEventListener("dragenter", enter);
 		eUL.addEventListener("dragover", over);
@@ -98,6 +122,10 @@
 
 	li.over {
 		border: 2px dashed #000;
+	}
+
+	li.move {
+		margin-bottom: 70px;
 	}
 </style>
 <body>
