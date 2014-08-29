@@ -343,6 +343,18 @@ var TodoSync = {
 		);
 	},
 
+	reorder: function(sourceId, targetId, callback) {
+		this.xhr(
+			"POST", 
+			"http://localhost:8080/reorder", 
+			"sourceId="+sourceId
+			+"&targetId="+targetId, 
+			function(oResult) {
+				callback(oResult);
+			}	
+		);
+	},
+
 	xhr: function(method, url, parameter, callback) {
 		console.log(arguments);
 		if (navigator.onLine) {
@@ -441,8 +453,10 @@ var TodoDrag = {
 		console.log("eTarget : ",eTarget);
 
 		eTarget.classList.remove('over');
-
-  		eTarget.parentNode.insertBefore(this.eOriginTarget, eTarget.nextElementSibling);
+		TodoSync.reorder(this.eOriginTarget.dataset.id, eTarget.dataset.id, function(oResult) {
+			console.log(oResult);
+			eTarget.parentNode.insertBefore(this.eOriginTarget, eTarget.nextElementSibling);
+		}.bind(this));
 	},
 
 	end: function(e) {

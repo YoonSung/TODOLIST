@@ -25,10 +25,10 @@ CREATE PROCEDURE UPDATE_PRIORITY(IN sourceID INT, IN targetID INT)
 				UPDATE todo 
 				SET priority = priority -1 
 				WHERE priority > sourcePriority
-				AND priority <= targetPriority;
+				AND priority < targetPriority;
 
 				UPDATE todo
-				SET priority = targetPriority 
+				SET priority = targetPriority-1 
 				WHERE id = sourceID;
 			ELSE
 				UPDATE todo
@@ -42,3 +42,7 @@ CREATE PROCEDURE UPDATE_PRIORITY(IN sourceID INT, IN targetID INT)
 		
 	END $$
 DELIMITER ;
+
+ALTER TABLE todo AUTO_INCREMENT = 1
+select * from todo order by priority desc;
+CALL UPDATE_priority(43, 39);

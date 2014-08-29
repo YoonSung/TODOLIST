@@ -91,6 +91,30 @@ app.post('/', function(request, response) {
 	}
 });
 
+app.post('/reorder', function(request, response) {
+	setHeader(request, response);
+
+	if (!isUndefinedOrNull(request.body) && !isUndefinedOrNull(request.body.sourceId) && !isUndefinedOrNull(request.body.targetId)) {
+		requestQuery(
+			"CALL UPDATE_PRIORITY(?, ?)",
+			[request.body.sourceId, request.body.targetId],
+			function(err, oResult) {
+				
+				if (err) {
+					console.log("err : ",err);
+					errorJson(response);
+					return;			
+				}
+				console.log("PROCEDURE RESULT : ",oResult);
+				response.json(oResult);
+			}
+		);	
+	} else {
+		errorJson(response);
+		return;
+	}
+});
+
 app.options('/', function(request, response) {
 	setHeader(request, response);
 	var method = request.headers["access-control-request-method"];
