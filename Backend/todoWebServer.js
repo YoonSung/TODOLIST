@@ -58,7 +58,7 @@ app.get('/', function(request, response) {
 	setHeader(request, response);
 
 	requestQuery(
-		"SELECT * FROM todo",
+		"SELECT * FROM todo ORDER BY priority ASC",
 		null,
 		function(err, aResult) {
 			console.log(aResult);
@@ -73,7 +73,7 @@ app.post('/', function(request, response) {
 
 	if (!isUndefinedOrNull(request.body) && !isUndefinedOrNull(request.body.todo)) {
 		requestQuery(
-			"INSERT INTO todo(todo, priority, created_date) values(?, LAST_INSERT_ID()+1, NOW())",
+			"INSERT INTO todo(todo, priority, created_date) values(?, (SELECT IFNULL(MAX(temp.priority)+1,0) FROM todo temp), NOW())",
 			[request.body.todo],
 			function(err, aResult) {
 				
