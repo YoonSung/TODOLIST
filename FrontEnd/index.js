@@ -38,6 +38,8 @@ var Todo = {
 
 		//Entire Todo's ROOT Element Events. Delegate EventCall
 		this.eList.addEventListener("click", function(e) {
+			console.log(e.target);
+			return;
 			//e.target = trigger element
 			//e.currentTarget =  event binding element
 			var eClicked = e.target;
@@ -80,6 +82,13 @@ var Todo = {
 
 		//Delete Todo When AnimationEnd
     	this.eList.addEventListener("webkitTransitionEnd", this.animationEnd.bind(this));
+
+
+    	this.eList.addEventListener("dragstart", TodoDrag.start);
+		this.eList.addEventListener("dragenter", TodoDrag.enter);
+		this.eList.addEventListener("dragover", TodoDrag.over);
+		this.eList.addEventListener("dragleave", TodoDrag.leave);
+		this.eList.addEventListener("drop", TodoDrag.drop);
 	},
 
 	changeFilterStatus: function(clickedFilterIndex) {
@@ -180,7 +189,7 @@ var Todo = {
 
 	animationEnd: function(e) {
 		var eAnimated = e.target;
-
+		console.log("eAnimated : ",eAnimated);
 		if (eAnimated.tagName.toLowerCase() !== "li")
 			return;
 
@@ -371,6 +380,71 @@ var TodoSync = {
 			});
 		}
 
+	},
+};
+
+var TodoDrag = {
+	eOriginTarget: null,
+	eNext: null,
+
+	start: function(e) {
+		this.eOriginTarget = e.target;
+		this.eOriginTarget.classList.add("movingTarget");
+		e.dataTransfer.effectAllowed = 'move';
+		//e.dataTransfer.setData("text/plain", eSource.id);
+	},
+
+	enter: function(e) {
+
+		var eTarget = e.target;
+		if (eTarget.tagName.toLowerCase() === "label") {
+			eTarget = eTarget.parentNode.parentNode;
+		} else {
+			return;
+		}
+		
+		(this.eOriginTarget == eTarget || this.eOriginTarget.previousElementSibling == eTarget) ? null : eTarget.classList.add("over");		
+	},
+
+	over: function(e) {
+		if (e.preventDefault) {
+			// Allows to drop.
+      		e.preventDefault(); 
+   		}
+		e.dataTransfer.dropEffect = 'move';
+    	return false;
+	},
+
+	leave: function(e) {
+		e.stopPropagation();
+  		e.preventDefault();
+
+  		var eTarget = e.target;
+
+		if (eTarget.tagName.toLowerCase() === "label") {
+			eTarget = eTarget.parentNode.parentNode;
+		} else {
+			return;
+		}
+		eTarget.classList.remove('over');
+	},
+
+	drop: function(e) {
+
+		// Stops some browsers from redirecting.
+		
+  		console.log("eNext : ",this.eNext);
+  		var eTarget = e.target;
+
+  		if (eTarget.tagName.toLowerCase() === "label") {
+			eTarget = eTarget.parentNode.parentNode;
+		} else {
+			return;
+		}
+		eTarget.classList.remove('over');
+		this.eOriginTarget.classList.remove("movingTarget");
+
+  		this.eNext == null ? null : eTarget.parentNode.insertBefore(eTarget, this.eNext);
 	},
 };
 

@@ -191,6 +191,25 @@ label[for='toggle-all'] {
 	opacity: 1;
 }
 
+#todo-list li.movingTarget {
+	background-color: #EBEBFF;
+	border: 1px solid #D4D4E6;
+}
+
+#todo-list li.over {
+	margin-bottom: 50px;
+}
+
+#todo-list li.over:after {
+	position: absolute;
+	display:inline-block;
+	border: 6px dashed #000;
+	margin-left: -3px;
+	width:545px;
+	height:60px;
+	content: " ";
+}
+
 #todo-list li:last-child {
 	border-bottom: none;
 }
@@ -253,6 +272,7 @@ label[for='toggle-all'] {
 	line-height: 1.2;
 	-webkit-transition: color 0.4s;
 	transition: color 0.4s;
+	cursor: move;
 }
 
 #todo-list li.completed label {

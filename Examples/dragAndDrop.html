@@ -13,8 +13,6 @@
 
 		e.dataTransfer.effectAllowed = 'move';
 		e.dataTransfer.setData("text/plain", eSource.id);
-		
-		eTarget.classList.add("test");
 	};
 
 	function enter(e) {
@@ -71,8 +69,6 @@
 
 	function leave(e) {
 		console.log("leave, id = ", e.target.id);
-		//e.target.classList.remove('over');
-		e.target.classList.remove('move');
 	};
 
 	function drop(e) {
@@ -142,15 +138,6 @@
 		height:50px;
 		content: " ";
 	}
-
-	li.move {
-		margin-bottom: 70px;
-	}
-
-	/*li.test {
-		width: 50px;
-		height: 25px;
-	}*/
 </style>
 <body>
 <ul>
