@@ -73,7 +73,7 @@ app.post('/', function(request, response) {
 
 	if (!isUndefinedOrNull(request.body) && !isUndefinedOrNull(request.body.todo)) {
 		requestQuery(
-			"INSERT INTO todo(todo, created_date) values(?, NOW())",
+			"INSERT INTO todo(todo, priority, created_date) values(?, LAST_INSERT_ID()+1, NOW())",
 			[request.body.todo],
 			function(err, aResult) {
 				
