@@ -70,7 +70,7 @@ app.get('/', function(request, response) {
 
 app.post('/', function(request, response) {
 	setHeader(request, response);
-
+	console.log("request : ", request.body);
 	if (!isUndefinedOrNull(request.body) && !isUndefinedOrNull(request.body.todo)) {
 		requestQuery(
 			"INSERT INTO todo(todo, priority, created_date) values(?, (SELECT IFNULL(MAX(temp.priority)+1,0) FROM todo temp), NOW())",

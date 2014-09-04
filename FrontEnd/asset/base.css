@@ -60,6 +60,10 @@ input[type="checkbox"] {
 	border-radius: 10px;
 }
 
+#speech.invisible {
+	display: none;
+}
+
 #todoapp {
 	background: #fff;
 	background: rgba(255, 255, 255, 0.9);
@@ -192,6 +196,10 @@ input[type="checkbox"] {
 	opacity: 1.0;
 	border: 5px solid lightgray;
 	border-radius: 10px;
+}
+
+#main > #mic.invisible {
+	display: none;
 }
 
 label[for='toggle-all'] {

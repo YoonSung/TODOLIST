@@ -504,10 +504,27 @@ var TodoSpeech = {
 		this.eSpeechToggle = document.querySelector("#speech");
 		this.eMicToggle = document.querySelector("#mic");
 
+		//Display Speech Toggle Menu
+		this.eSpeechToggle.classList.remove("invisible");
+		this.eSpeechToggle.classList.remove("invisible");
+
+		//Event Binding
+  		this.eventHandler();
+	},
+
+	eventHandler: function() {
 		this.recognition.onstart = this.start;
   		this.recognition.onresult = this.result;
   		this.recognition.onerror = this.error;
   		this.recognition.onend = this.end;
+
+  		this.eSpeechToggle.addEventListener("click", function(e) {
+
+  		});
+
+  		this.eMicToggle.addEventListener("click", function(e) {
+
+  		});
 	},
 
 	say: function(text) {
