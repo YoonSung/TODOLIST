@@ -38,6 +38,28 @@ input[type="checkbox"] {
   outline: none;
 }
 
+#speech {
+	width: 64px;
+	height: 64px;
+	background-image: url("speech.png");
+	background-size: contain;
+	background-repeat: no-repeat;
+	position: fixed;
+	opacity: 0.1;
+	left: 10px;
+	top: 10px;
+}
+
+#speech:hover {
+	opacity: 0.5;
+}
+
+#speech.active {
+	opacity: 1.0;
+	border: 5px solid lightgray;
+	border-radius: 10px;
+}
+
 #todoapp {
 	background: #fff;
 	background: rgba(255, 255, 255, 0.9);
@@ -147,6 +169,29 @@ input[type="checkbox"] {
 	position: relative;
 	z-index: 2;
 	border-top: 1px dotted #adadad;
+}
+
+#main > #mic {
+	width: 25px;
+	height: 35px;
+	background-image: url("mic.png");
+	background-size: contain;
+	background-repeat: no-repeat;
+	position: absolute;
+	opacity: 0.1;
+	top: -50px;
+	right: 20px;
+}
+
+#main > #mic:hover {
+	opacity: 0.5;
+	cursor: pointer;
+}
+
+#main > #mic.active {
+	opacity: 1.0;
+	border: 5px solid lightgray;
+	border-radius: 10px;
 }
 
 label[for='toggle-all'] {
@@ -278,6 +323,37 @@ label[for='toggle-all'] {
 #todo-list li.completed label {
 	color: #a9a9a9;
 	text-decoration: line-through;
+}
+
+#todo-list li .speech {
+	display: none;
+	position: absolute;
+	top: 0;
+	right: 60px;
+	bottom: 0;
+	width: 40px;
+	height: 40px;
+	margin: auto 0;
+	font-size: 22px;
+	color: #a88a8a;
+	-webkit-transition: all 0.2s;
+	transition: all 0.2s;
+}
+
+#todo-list li .speech:hover {
+	text-shadow: 0 0 1px #000,
+				 0 0 10px rgba(199, 107, 107, 0.8);
+	-webkit-transform: scale(1.3);
+	-ms-transform: scale(1.3);
+	transform: scale(1.3);
+}
+
+#todo-list li .speech:after {
+	content: ':D';
+}
+
+#todo-list li:hover .speech {
+	display: block;
 }
 
 #todo-list li .destroy {
