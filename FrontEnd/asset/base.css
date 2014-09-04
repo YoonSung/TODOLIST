@@ -333,7 +333,7 @@ label[for='toggle-all'] {
 	text-decoration: line-through;
 }
 
-#todo-list li .speech {
+#todo-list.speechPossible li .speech {
 	display: none;
 	position: absolute;
 	top: 0;
@@ -348,7 +348,7 @@ label[for='toggle-all'] {
 	transition: all 0.2s;
 }
 
-#todo-list li .speech:hover {
+#todo-list.speechPossible li .speech:hover {
 	text-shadow: 0 0 1px #000,
 				 0 0 10px rgba(199, 107, 107, 0.8);
 	-webkit-transform: scale(1.3);
@@ -356,11 +356,11 @@ label[for='toggle-all'] {
 	transform: scale(1.3);
 }
 
-#todo-list li .speech:after {
+#todo-list.speechPossible li .speech:after {
 	content: ':D';
 }
 
-#todo-list li:hover .speech {
+#todo-list.speechPossible li:hover .speech {
 	display: block;
 }
 

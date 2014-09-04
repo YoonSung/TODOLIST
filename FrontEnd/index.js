@@ -481,6 +481,8 @@ var TodoSpeech = {
 	utterance: null,
 
 	init: function() {
+		//For Test
+		//return;
 
 		//Check Speech Recognition API Support
 		if (!('webkitSpeechRecognition' in window))
@@ -506,7 +508,10 @@ var TodoSpeech = {
 
 		//Display Speech Toggle Menu
 		this.eSpeechToggle.classList.remove("invisible");
-		this.eSpeechToggle.classList.remove("invisible");
+		this.eMicToggle.classList.remove("invisible");
+
+		//Appear Speech Toggle on each TODO
+		Todo.eList.classList.add("speechPossible");
 
 		//Event Binding
   		this.eventHandler();
@@ -529,13 +534,6 @@ var TodoSpeech = {
 
 	say: function(text) {
 		this.utterance.text = text;
-		//window.speechSynthesis(this.utterance);
-		//window.speechSynthesis.speak("test");
-		//window.speechSynthesis.speak(this.utterance);
-		//var u = new SpeechSynthesisUtterance("testest");
-		//u.lang = 'ko';
-		//u.volume = 1.0;
-		//u.text = '안녕. 공부 잘하고 있지?';
 		speechSynthesis.speak(this.utterance);
 	},
 
