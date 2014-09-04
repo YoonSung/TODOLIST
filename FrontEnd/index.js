@@ -47,11 +47,21 @@ var Todo = {
 				var eTargetLi = eClicked.parentNode.parentNode;
 				this.complete(eTargetLi.dataset.id);
 				
-			//Press Destroy Button
+			
 			} else if (eClicked.tagName.toLowerCase() === "button") {
-				var eTargetLi = eClicked.parentNode.parentNode;
-				eTargetLi.style.opacity = 0;
-				
+
+				var sClassName = eClicked.className.toLowerCase();
+
+				//Press Speech Button
+				if (sClassName === "speech") {
+					TodoSpeech.say(eClicked.previousElementSibling.innerText);
+
+				//Press Destroy Button
+				} else if (sClassName === "destroy") {	
+					var eTargetLi = eClicked.parentNode.parentNode;
+					eTargetLi.style.opacity = 0;	
+
+				}
 			}
 		}.bind(this));
 
@@ -464,10 +474,84 @@ var TodoDrag = {
 	}
 };
 
+var TodoSpeech = {
+	eSpeechToggle: null,
+	eMicToggle: null,
+	recognition: null,
+	utterance: null,
+
+	init: function() {
+
+		//Check Speech Recognition API Support
+		if (!('webkitSpeechRecognition' in window))
+			return;
+
+		//Check Speech Utterance API Support
+		if (Util.isUndefinedOrNull(window.speechSynthesis))
+			return;
+
+		/*
+		 * Above All API Support, Initialize And Support Function
+		 */
+
+		//Initialize SpeechRecognition API
+		this.recognition = new webkitSpeechRecognition();
+
+		//Initialize SpeechUtterance API
+		this.utterance = new SpeechSynthesisUtterance();
+		this.utterance.lang = 'ko';
+
+		this.eSpeechToggle = document.querySelector("#speech");
+		this.eMicToggle = document.querySelector("#mic");
+
+		this.recognition.onstart = this.start;
+  		this.recognition.onresult = this.result;
+  		this.recognition.onerror = this.error;
+  		this.recognition.onend = this.end;
+	},
+
+	say: function(text) {
+		this.utterance.text = text;
+		//window.speechSynthesis(this.utterance);
+		//window.speechSynthesis.speak("test");
+		//window.speechSynthesis.speak(this.utterance);
+		//var u = new SpeechSynthesisUtterance("testest");
+		//u.lang = 'ko';
+		//u.volume = 1.0;
+		//u.text = '안녕. 공부 잘하고 있지?';
+		speechSynthesis.speak(this.utterance);
+	},
+
+	active: function() {
+
+	},
+
+	disactive: function() {
+
+	},
+
+	start: function() {
+
+	},
+
+	end: function() {
+
+	},
+
+	result: function() {
+
+	},
+
+	error: function() {
+
+	}
+};
+
 function init() {
 
 	Todo.init();
 	TodoSync.init();
+	TodoSpeech.init();
 
 	TodoSync.getAll(function(aTodo) {
 		for(var i = 0 ; i < aTodo.length ; ++i) {
