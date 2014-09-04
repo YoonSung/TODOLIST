@@ -475,11 +475,15 @@ var TodoDrag = {
 };
 
 var TodoSpeech = {
+	CONSTANT: {
+		"LANGUAGE": "ko",
+	},
 	eSpeechToggle: null,
 	eMicToggle: null,
 	recognition: null,
 	utterance: null,
-
+	sUtterance: null,
+	
 	init: function() {
 		//For Test
 		//return;
@@ -498,10 +502,13 @@ var TodoSpeech = {
 
 		//Initialize SpeechRecognition API
 		this.recognition = new webkitSpeechRecognition();
+		this.recognition.lang = this.CONSTANT.LANGUAGE;
+		this.recognition.continuous = true;				//Mic Capture Once true or not (Default is false)
+		this.recognition.interimResults = true;			//Browser Recognition "Word", Apply result. (Default is false)
 
 		//Initialize SpeechUtterance API
 		this.utterance = new SpeechSynthesisUtterance();
-		this.utterance.lang = 'ko';
+		this.utterance.lang = this.CONSTANT.LANGUAGE;
 
 		this.eSpeechToggle = document.querySelector("#speech");
 		this.eMicToggle = document.querySelector("#mic");
@@ -518,18 +525,18 @@ var TodoSpeech = {
 	},
 
 	eventHandler: function() {
-		this.recognition.onstart = this.start;
-  		this.recognition.onresult = this.result;
-  		this.recognition.onerror = this.error;
-  		this.recognition.onend = this.end;
+		this.recognition.onstart = this.listenStart;
+  		this.recognition.onresult = this.listenResult;
+  		this.recognition.onend = this.listenEnd;
 
   		this.eSpeechToggle.addEventListener("click", function(e) {
 
   		});
 
   		this.eMicToggle.addEventListener("click", function(e) {
-
-  		});
+			console.log("recognition : ",this.recognition);
+  			this.recognition.start();
+  		}.bind(this));
 	},
 
 	say: function(text) {
@@ -545,20 +552,35 @@ var TodoSpeech = {
 
 	},
 
-	start: function() {
-
+	listenStart: function(e) {
+		console.log("listenStart");
 	},
 
-	end: function() {
-
+	listenEnd: function(e) {
+		console.log("listenEnd");
 	},
 
-	result: function() {
+	listenResult: function(e) {
+		console.log("listenResult");
+		var sMessage = '';
+		var isLastPosition = false;
 
-	},
+	    for(var i = e.resultIndex; i < e.results.length; ++i) {
 
-	error: function() {
+	    	if (event.results[i].isFinal) {
+              //transcription.textContent = event.results[i][0].transcript + ' (Confidence: ' + event.results[i][0].confidence + ')';
+              Todo.eInput.value = event.results[i][0].transcript.substring(1, event.results[i][0].transcript.length);
+            } else {
+              Todo.eInput.value = event.results[i][0].transcript;
+            }
+	    	console.log(sMessage)
+	      	//sMessage += e.results[i][0].transcript;
+	      	//isLastPosition = e.results[i].isFinal;
+	    }
 
+	    console.log("sMessage : ", sMessage);
+
+	    Todo.eInput.value += sMessage;
 	}
 };
 
