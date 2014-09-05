@@ -38,30 +38,57 @@ input[type="checkbox"] {
   outline: none;
 }
 
-#speech {
+#speechControl {
+	position: absolute;
+	left: 10px;
+	top: 10px;
+	position: fixed;
+}
+
+#speechControl .speech {
 	width: 64px;
 	height: 64px;
 	background-image: url("speech.png");
 	background-size: contain;
 	background-repeat: no-repeat;
-	position: fixed;
 	opacity: 0.1;
-	left: 10px;
-	top: 10px;
 }
 
-#speech:hover {
+#speechControl .speech:hover {
 	opacity: 0.5;
 }
 
-#speech.active {
+#speechControl .speech.active {
 	opacity: 1.0;
 	border: 5px solid lightgray;
 	border-radius: 10px;
 }
 
-#speech.invisible {
+#speechControl #speech.invisible {
 	display: none;
+}
+
+#speechControl .discription {
+	display: none;
+}
+
+#speechControl .discription.active {
+	position: absolute;
+	display: inline-block;
+	top: 80px;
+	width: 250px;
+	height: 200px;
+	border: 1px solid lightgray;
+	border-radius: 10px;
+	background-color: white;
+	box-shadow: 1px 1px 1px 1px #888888;
+}
+
+#speechControl .discription .close {
+	position: absolute;
+	font-size: 30px;
+	right: 5px;
+	top: 5px;
 }
 
 #todoapp {
@@ -196,6 +223,13 @@ input[type="checkbox"] {
 	opacity: 1.0;
 	border: 5px solid lightgray;
 	border-radius: 10px;
+	box-sizing: content-box;
+	top: -55px;
+	right: 15px;
+}
+
+#main > #mic.active.on {
+	border: 5px dotted lightgray;
 }
 
 #main > #mic.invisible {

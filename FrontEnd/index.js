@@ -480,10 +480,12 @@ var TodoSpeech = {
 	},
 	eSpeechToggle: null,
 	eMicToggle: null,
+	eDiscription: null,
+
 	recognition: null,
 	utterance: null,
-	sUtterance: null,
-	
+	sMessage: "",
+
 	init: function() {
 		//For Test
 		//return;
@@ -510,8 +512,9 @@ var TodoSpeech = {
 		this.utterance = new SpeechSynthesisUtterance();
 		this.utterance.lang = this.CONSTANT.LANGUAGE;
 
-		this.eSpeechToggle = document.querySelector("#speech");
+		this.eSpeechToggle = document.querySelector("#speechControl .speech");
 		this.eMicToggle = document.querySelector("#mic");
+		this.eDiscription = document.querySelector("#speechControl .discription");
 
 		//Display Speech Toggle Menu
 		this.eSpeechToggle.classList.remove("invisible");
@@ -525,14 +528,16 @@ var TodoSpeech = {
 	},
 
 	eventHandler: function() {
-		this.recognition.onstart = this.listenStart;
-  		this.recognition.onresult = this.listenResult;
-  		this.recognition.onend = this.listenEnd;
+		this.recognition.onstart = this.listenStart.bind(this);
+  		this.recognition.onresult = this.listenResult.bind(this);
+  		this.recognition.onend = this.listenEnd.bind(this);
 
+  		//leftTop Speech Control Menu
   		this.eSpeechToggle.addEventListener("click", function(e) {
-
+  			this.classList[this.classList.contains("active") == true ?  "remove" : "add"]("active");
   		});
 
+  		//MIC in TODO inputBox. It is use to be add new Todo by oral
   		this.eMicToggle.addEventListener("click", function(e) {
 			console.log("recognition : ",this.recognition);
   			this.recognition.start();
@@ -554,33 +559,40 @@ var TodoSpeech = {
 
 	listenStart: function(e) {
 		console.log("listenStart");
+		this.sMessage = "";
+		this.eMicToggle.classList.add("active");
 	},
 
 	listenEnd: function(e) {
 		console.log("listenEnd");
+		this.eMicToggle.classList.remove("active");
 	},
 
 	listenResult: function(e) {
 		console.log("listenResult");
-		var sMessage = '';
-		var isLastPosition = false;
+
+		var sTranscript = null;
 
 	    for(var i = e.resultIndex; i < e.results.length; ++i) {
 
 	    	if (event.results[i].isFinal) {
-              //transcription.textContent = event.results[i][0].transcript + ' (Confidence: ' + event.results[i][0].confidence + ')';
-              Todo.eInput.value = event.results[i][0].transcript.substring(1, event.results[i][0].transcript.length);
+              sTranscript = event.results[i][0].transcript;
+              // + ' (Confidence: ' + event.results[i][0].confidence + ')';
+              //sTranscript = sTranscript.substring(1, sTranscript.length);
+              this.sMessage += sTranscript;
+              Todo.eInput.value = this.sMessage;
             } else {
-              Todo.eInput.value = event.results[i][0].transcript;
+              Todo.eInput.value = this.sMessage + event.results[i][0].transcript;
             }
-	    	console.log(sMessage)
-	      	//sMessage += e.results[i][0].transcript;
-	      	//isLastPosition = e.results[i].isFinal;
+
+            this.eMicToggle.classList.add("on");
 	    }
 
-	    console.log("sMessage : ", sMessage);
-
-	    Todo.eInput.value += sMessage;
+	    setTimeout(function() {
+			this.eMicToggle.classList.remove("on");
+	    }.bind(this), 200);
+	    
+	    console.log("sMessage : ", this.sMessage);
 	}
 };
 
