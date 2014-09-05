@@ -474,9 +474,14 @@ var TodoDrag = {
 	}
 };
 
+//http://commondatastorage.googleapis.com/io-2013/presentations/4057%20Web%20Speech%20API%20creates%20Interactive%20Experiences%20-%20Google%20I-O%202013%20Codelab.pdf
 var TodoSpeech = {
 	CONSTANT: {
 		"LANGUAGE": "ko",
+		"ANNOUNCE_SPEECH": "음성인식모드가 실행됩니다.",
+		"COMMAND" : {
+			" 더하기": "create"
+		}
 	},
 	eSpeechToggle: null,
 	eMicToggle: null,
@@ -506,6 +511,7 @@ var TodoSpeech = {
 		this.recognition = new webkitSpeechRecognition();
 		this.recognition.lang = this.CONSTANT.LANGUAGE;
 		this.recognition.continuous = true;				//Mic Capture Once true or not (Default is false)
+		this.recognition.continuous
 		this.recognition.interimResults = true;			//Browser Recognition "Word", Apply result. (Default is false)
 
 		//Initialize SpeechUtterance API
@@ -534,8 +540,21 @@ var TodoSpeech = {
 
   		//leftTop Speech Control Menu
   		this.eSpeechToggle.addEventListener("click", function(e) {
-  			this.classList[this.classList.contains("active") == true ?  "remove" : "add"]("active");
-  		});
+
+  			var eSpeechToggleClasses = this.eSpeechToggle.classList;
+
+  			if (eSpeechToggleClasses.contains("active") == true) {
+  				eSpeechToggleClasses.remove("active");
+  				eSpeechToggleClasses.remove("active");
+
+  			} else {
+  				this.say(this.CONSTANT.ANNOUNCE_SPEECH);
+				eSpeechToggleClasses.add("active");
+				this.eDiscription.classList.add("active");
+
+  			}
+
+  		}.bind(this));
 
   		//MIC in TODO inputBox. It is use to be add new Todo by oral
   		this.eMicToggle.addEventListener("click", function(e) {
@@ -565,32 +584,48 @@ var TodoSpeech = {
 
 	listenEnd: function(e) {
 		console.log("listenEnd");
-		this.eMicToggle.classList.remove("active");
+		//this.eMicToggle.classList.remove("active");
+		this.recognition.start();
 	},
 
 	listenResult: function(e) {
 		console.log("listenResult");
 
 		var sTranscript = null;
+		var eInput = Todo.eInput;
 
 	    for(var i = e.resultIndex; i < e.results.length; ++i) {
 
+	    	sTranscript = event.results[i][0].transcript;
+			console.log("hasOwnProperty?: ",this.CONSTANT.COMMAND.hasOwnProperty(sTranscript));
+
 	    	if (event.results[i].isFinal) {
-              sTranscript = event.results[i][0].transcript;
-              // + ' (Confidence: ' + event.results[i][0].confidence + ')';
-              //sTranscript = sTranscript.substring(1, sTranscript.length);
-              this.sMessage += sTranscript;
-              Todo.eInput.value = this.sMessage;
+              	// + ' (Confidence: ' + event.results[i][0].confidence + ')';
+              	//sTranscript = sTranscript.substring(1, sTranscript.length);
+
+	            //Analyse Command
+	            if (this.CONSTANT.COMMAND.hasOwnProperty(sTranscript) == true) {
+	            	console.log("testestest");
+	            	console.log(this.CONSTANT.COMMAND[sTranscript]);
+					if (this.CONSTANT.COMMAND[sTranscript] === "create") {
+						eInput.value == "" ? this.say("할일을 입력하세요") : Todo.create(this.sMessage, true);
+	          		}
+
+				} else {
+					this.sMessage += sTranscript;
+					eInput.value = this.sMessage;
+	          	}
+
             } else {
-              Todo.eInput.value = this.sMessage + event.results[i][0].transcript;
+              eInput.value = this.sMessage + sTranscript;
             }
 
             this.eMicToggle.classList.add("on");
-	    }
 
-	    setTimeout(function() {
-			this.eMicToggle.classList.remove("on");
-	    }.bind(this), 200);
+			setTimeout(function() {
+				this.eMicToggle.classList.remove("on");
+	    	}.bind(this), 200);
+	    }
 	    
 	    console.log("sMessage : ", this.sMessage);
 	}
