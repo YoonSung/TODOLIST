@@ -610,7 +610,7 @@ var TodoSpeech = {
 					if (this.CONSTANT.COMMAND[sTranscript] === "create") {
 						eInput.value == "" ? this.say("할일을 입력하세요") : Todo.create(this.sMessage, true);
 	          		}
-
+	          	
 				} else {
 					this.sMessage += sTranscript;
 					eInput.value = this.sMessage;
