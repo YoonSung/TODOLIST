@@ -482,13 +482,16 @@ var TodoSpeech = {
 		"ANNOUNCE_START_SPEECH": "음성인식모드가 시작되었습니다.",
 		"ANNOUNCE_END_SPEECH": "음성인식모드가 종료되었습니다.",
 		"ANNOUNCE_CANNOT_MOVE_SPEECH": "할일 목록이 없습니다. 다른 명령을 제시해주세요",
+		"ANNOUNCE_UNSUTABLE_COMMAND": "명령이 적절하지 않습니다. 다른 명령을 제시해주세요",
 		"COMMAND" : {
 			" 더하기": "create",
 			" 지우기": "erase",
 			" 취소" : "cancle",
-			"다음" : "next",
+			"다음"  : "next",
 			" 다음" : "next",
 			" 이전" : "prev",
+			" 완료" : "complete",
+			" 삭제" : "delete"
 		}
 	},
 	eSpeechToggle: null,
@@ -704,8 +707,23 @@ var TodoSpeech = {
 	          					this.isOnTodoElement = false;
 	          				}
 	          			}
-	          		}
 
+	          		//Want to ( Complte & delete ) Current Todo
+	          		} else if (this.CONSTANT.COMMAND[sTranscript] === "complete" || this.CONSTANT.COMMAND[sTranscript] === "delete") {
+	          			var sCommand = this.CONSTANT.COMMAND[sTranscript];
+
+	          			if (this.isOnTodoElement === false) {
+							this.say(this.CONSTANT.ANNOUNCE_UNSUTABLE_COMMAND);
+							return;
+	          			} else {
+	          				var eTarget = document.querySelector("#todo-list > li.speechFocus");
+	          				var nId = eTarget.dataset.id;
+	          				Todo[sCommand](nId);
+
+	          				this.eHeader.classList.add("speechFocus");
+	          				this.isOnTodoElement = false;
+	          			}
+	          		}
 	          	
 				} else {
 					this.sMessage += sTranscript;
