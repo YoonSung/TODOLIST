@@ -107,17 +107,17 @@ var Todo = {
 	},
 
 	showAll: function() {
-		this.eList.className = this.eList.className.split(" ")[0];
+		this.eList.className = "";
 		this.changeFilterStatus(0);
 	},
 	
 	showActive: function() {
-		this.eList.className = this.eList.className + " all-active";
+		this.eList.className = "all-active";
 		this.changeFilterStatus(1);
 	},
 
 	showCompleted: function() {
-		this.eList.className = this.eList.className + " all-completed";
+		this.eList.className = "all-completed";
 		this.changeFilterStatus(2);
 	},
 
@@ -415,18 +415,31 @@ var TodoDrag = {
 	},
 
 	enter: function(e) {
-
+		
+		var sType = e.dataTransfer.types[0];
 		var eTarget = e.target;
+			
 		if (eTarget.tagName.toLowerCase() === "label") {
 			eTarget = eTarget.parentNode.parentNode;
 		} else {
 			return;
 		}
-		
-		(this.eOriginTarget == eTarget || this.eOriginTarget.previousElementSibling == eTarget) ? null : eTarget.classList.add("over");		
+
+
+		//File DnD
+		if (!Util.isUndefinedOrNull(sType) && sType.toLowerCase() === "files") {
+			eTarget.classList.add("fileOver");
+
+		//Not File
+		} else {			
+			(this.eOriginTarget == eTarget || this.eOriginTarget.previousElementSibling == eTarget) ? null : eTarget.classList.add("over");		
+		}
 	},
 
 	over: function(e) {
+		if (e.target.tagName.toLowerCase() !== "label")
+			return;
+
 		if (e.preventDefault) {
 			// Allows to drop.
       		e.preventDefault(); 
@@ -436,6 +449,8 @@ var TodoDrag = {
 	},
 
 	leave: function(e) {
+
+		var sType = e.dataTransfer.types[0];
   		var eTarget = e.target;
 
 		if (eTarget.tagName.toLowerCase() === "label") {
@@ -443,11 +458,18 @@ var TodoDrag = {
 		} else {
 			return;
 		}
-		eTarget.classList.remove('over');
+
+		//File DnD
+		if (!Util.isUndefinedOrNull(sType) && sType.toLowerCase() === "files") {
+			eTarget.classList.remove("fileOver");
+
+		//Not File
+		} else {			
+			eTarget.classList.remove('over');
+		}
 	},
 
 	drop: function(e) {
-
 		// Stops some browsers from redirecting.
 		e.stopPropagation(); 
   		e.preventDefault();
@@ -462,11 +484,19 @@ var TodoDrag = {
 
 		console.log("eTarget : ",eTarget);
 
-		eTarget.classList.remove('over');
-		TodoSync.reorder(this.eOriginTarget.dataset.id, eTarget.dataset.id, function(oResult) {
-			console.log(oResult);
-			eTarget.parentNode.insertBefore(this.eOriginTarget, eTarget.nextElementSibling);
-		}.bind(this));
+
+		//File DnD
+		if (!Util.isUndefinedOrNull(sType) && sType.toLowerCase() === "files") {
+			//TODO
+
+		//Not File
+		} else {			
+			eTarget.classList.remove('over');
+			TodoSync.reorder(this.eOriginTarget.dataset.id, eTarget.dataset.id, function(oResult) {
+				console.log(oResult);
+				eTarget.parentNode.insertBefore(this.eOriginTarget, eTarget.nextElementSibling);
+			}.bind(this));
+		}
 	},
 
 	end: function(e) {
@@ -546,7 +576,7 @@ var TodoSpeech = {
 		this.eMicToggle.classList.remove("invisible");
 
 		//Appear Speech Toggle on each TODO
-		Todo.eList.classList.add("speechPossible");
+		document.querySelector("#main").classList.add("speechPossible");
 
 		//Event Binding
   		this.eventHandler();
