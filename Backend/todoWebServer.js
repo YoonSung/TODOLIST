@@ -33,7 +33,7 @@ function setHeader(request,response){
 }
 
 function isUndefinedOrNull(data) {
-	return (data === undefined || data === null)
+	return (data === undefined || data === null);
 }
 
 //for parsing request data
