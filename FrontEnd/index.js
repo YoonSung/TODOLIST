@@ -1,4 +1,4 @@
-var Util = {
+	var Util = {
 	isUndefinedOrNull: function(value) {
 		return (value === undefined || value === null);
 	}
@@ -478,9 +478,17 @@ var TodoDrag = {
 var TodoSpeech = {
 	CONSTANT: {
 		"LANGUAGE": "ko",
-		"ANNOUNCE_SPEECH": "음성인식모드가 실행됩니다.",
+		"ANNOUNCE_SPEECH": "상단의 마이크사용을 허용하면 음성인식모드가 실행됩니다.",
+		"ANNOUNCE_START_SPEECH": "음성인식모드가 시작되었습니다.",
+		"ANNOUNCE_END_SPEECH": "음성인식모드가 종료되었습니다.",
+		"ANNOUNCE_CANNOT_MOVE_SPEECH": "할일 목록이 없습니다. 다른 명령을 제시해주세요",
 		"COMMAND" : {
-			" 더하기": "create"
+			" 더하기": "create",
+			" 지우기": "erase",
+			" 취소" : "cancle",
+			"다음" : "next",
+			" 다음" : "next",
+			" 이전" : "prev",
 		}
 	},
 	eSpeechToggle: null,
@@ -490,6 +498,8 @@ var TodoSpeech = {
 	recognition: null,
 	utterance: null,
 	sMessage: "",
+	eHeader: null,
+	isOnTodoElement: false,
 
 	init: function() {
 		//For Test
@@ -518,9 +528,11 @@ var TodoSpeech = {
 		this.utterance = new SpeechSynthesisUtterance();
 		this.utterance.lang = this.CONSTANT.LANGUAGE;
 
+		//Initialize Element
 		this.eSpeechToggle = document.querySelector("#speechControl .speech");
 		this.eMicToggle = document.querySelector("#mic");
 		this.eDiscription = document.querySelector("#speechControl .discription");
+		this.eHeader = document.querySelector("#header");
 
 		//Display Speech Toggle Menu
 		this.eSpeechToggle.classList.remove("invisible");
@@ -542,16 +554,16 @@ var TodoSpeech = {
   		this.eSpeechToggle.addEventListener("click", function(e) {
 
   			var eSpeechToggleClasses = this.eSpeechToggle.classList;
+  			console.log("eSpeechToggleClasses : ",eSpeechToggleClasses);
+			console.log("contains? : ",eSpeechToggleClasses.contains("active"));
 
   			if (eSpeechToggleClasses.contains("active") == true) {
-  				eSpeechToggleClasses.remove("active");
-  				eSpeechToggleClasses.remove("active");
+  				this.recognition.stop();
 
   			} else {
   				this.say(this.CONSTANT.ANNOUNCE_SPEECH);
-				eSpeechToggleClasses.add("active");
-				this.eDiscription.classList.add("active");
 
+				this.recognition.start();
   			}
 
   		}.bind(this));
@@ -568,24 +580,34 @@ var TodoSpeech = {
 		speechSynthesis.speak(this.utterance);
 	},
 
-	active: function() {
-
-	},
-
-	disactive: function() {
-
-	},
-
 	listenStart: function(e) {
 		console.log("listenStart");
 		this.sMessage = "";
+		this.isOnTodoElement = false;
+
 		this.eMicToggle.classList.add("active");
+		this.eHeader.classList.add("speechFocus");
+
+		this.eSpeechToggle.classList.add("active");
+		this.eDiscription.classList.add("active");
+
+		this.say(this.CONSTANT.ANNOUNCE_START_SPEECH);
 	},
 
 	listenEnd: function(e) {
 		console.log("listenEnd");
-		//this.eMicToggle.classList.remove("active");
-		this.recognition.start();
+		this.eMicToggle.classList.remove("active");
+		this.eHeader.classList.remove("speechFocus");
+
+		this.eSpeechToggle.classList.remove("active");
+		this.eDiscription.classList.remove("active");
+
+		this.say(this.CONSTANT.ANNOUNCE_END_SPEECH);
+
+		var eSpeechFocus = document.querySelector("#todo-list > li.speechFocus");
+
+		if (!Util.isUndefinedOrNull(eSpeechFocus)) 
+			eSpeechFocus.classList.remove("speechFocus");
 	},
 
 	listenResult: function(e) {
@@ -607,9 +629,83 @@ var TodoSpeech = {
 	            if (this.CONSTANT.COMMAND.hasOwnProperty(sTranscript) == true) {
 	            	console.log("testestest");
 	            	console.log(this.CONSTANT.COMMAND[sTranscript]);
+
+	            	//When Create Command Request
 					if (this.CONSTANT.COMMAND[sTranscript] === "create") {
-						eInput.value == "" ? this.say("할일을 입력하세요") : Todo.create(this.sMessage, true);
+						eInput.value == "" ? 
+							this.say("할일을 입력하세요") 
+							: 
+							function() {
+								Todo.create(this.sMessage, true);
+								eInput.value = "";
+							}.bind(this)();
+
+					//When Erase Last Input Word
+	          		} else if (this.CONSTANT.COMMAND[sTranscript] === "erase") {
+	          			var aMessage = this.sMessage.split(" ");
+
+	          			//erase last word
+	          			aMessage.pop();
+
+	          			this.sMessage = aMessage.join(" ");
+	          			eInput.value = this.sMessage;
+
+	          		//Want to Erase All Input Value
+	          		} else if (this.CONSTANT.COMMAND[sTranscript] === "cancle") {
+	          			this.sMessage = "";
+	          			eInput.value = "";
+	          		
+	          		//Want to Focus Next Todo
+	          		} else if (this.CONSTANT.COMMAND[sTranscript] === "next") {
+
+	          			//First Access
+	          			if (this.isOnTodoElement === false) {
+	          				var eTarget = document.querySelector("#todo-list > li");
+
+	          				//If List is Empty
+	          				if (Util.isUndefinedOrNull(eTarget)) {
+	          					this.say(this.CONSTANT.ANNOUNCE_CANNOT_MOVE_SPEECH);
+	          					return;
+
+	          				}
+
+	          				this.eHeader.classList.remove("speechFocus");
+	          				eTarget.classList.add("speechFocus");
+	          				this.isOnTodoElement = true;
+	          					
+
+	          			//Already in Todo Element
+	          			} else {
+	          				var ePrevTarget = document.querySelector("#todo-list > li.speechFocus");
+	          				var eCurrentTarget = ePrevTarget.nextElementSibling;
+
+	          				ePrevTarget.classList.remove("speechFocus");
+	          				eCurrentTarget.classList.add("speechFocus");
+	          			}
+	          			this.sMessage = "";
+	          			eInput.value = "";
+
+	          		//Want to Focus Previous Todo
+	          		} else if (this.CONSTANT.COMMAND[sTranscript] === "prev") {
+	          			//First Access
+	          			if (this.isOnTodoElement === false) {
+	          				this.say(this.CONSTANT.ANNOUNCE_CANNOT_MOVE_SPEECH);
+	          				return;
+	          			} else {
+	          				var ePrevTarget = document.querySelector("#todo-list > li.speechFocus");
+	          				var eCurrentTarget = ePrevTarget.previousElementSibling;
+
+	          				ePrevTarget.classList.remove("speechFocus");
+
+	          				if (eCurrentTarget === null) {
+	          					this.eHeader.classList.add("speechFocus");
+	          				} else {
+	          					eCurrentTarget.classList.add("speechFocus");	
+	          					this.isOnTodoElement = false;
+	          				}
+	          			}
 	          		}
+
 	          	
 				} else {
 					this.sMessage += sTranscript;
