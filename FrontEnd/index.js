@@ -899,12 +899,14 @@ var TodoFile = {
 
 			//TODO Video, Audio File
 			//TODO Network Transfer File
+
+			this.upload(13, file);
 		}
 	},
 
 	upload: function(nId, file) {
 
-		this.progressbar.classList.remove("complete");
+		this.eProgressbar.classList.remove("complete");
 
 		var xhr = new XMLHttpRequest();
 
@@ -913,30 +915,39 @@ var TodoFile = {
 			if (e.lengthComputable) {
 				var nPercent = (e.loaded / e.total) * 100;
 				this.ePercent = nPercent;
-				this.progressbar.style.width = nPercent + "%";
+				this.eProgressbar.style.width = nPercent + "%";
 			} else {
 				console.log("when called this? : ", e);
 				// No data to calculate on
 			}
-		}, false);
+		}.bind(this), false);
 
 		// File uploaded
 		xhr.addEventListener("load", function () {
-			this.progressbar.classList.add("complete");
+			this.eProgressbar.classList.add("complete");
 			this.eBg.classList.add("off");
 		}, false);
 
 		// Open Connection
-		xhr.open("post", "/upload", true);
-		
+		xhr.open("post", "http://localhost:8080/upload", true);
+
 		// Set appropriate headers
-		xhr.setRequestHeader("Content-Type", "multipart/form-data");
-		xhr.setRequestHeader("fileName", file.name);
-		xhr.setRequestHeader("fileType", file.type);
-		xhr.setRequestHeader("id", nId);
-		
+		xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+		//xhr.setRequestHeader("Content-Type", "multipart/form-data");
+
 		// Send the file (doh)
-		xhr.send(file);
+		
+		xhr.send(
+			"file="+file
+			//+"&fileName="+file.name
+			+"&extension="+file.name.split(".").pop()
+			+"&id="+nId
+			+"&fileType="+file.type);
+		/*
+		var form = new FormData();
+		form.append("test", file);
+		xhr.send(form);
+		*/
 	}
 }
 
@@ -945,6 +956,7 @@ function init() {
 	Todo.init();
 	TodoSync.init();
 	TodoSpeech.init();
+	TodoFile.init();
 
 	TodoSync.getAll(function(aTodo) {
 		for(var i = 0 ; i < aTodo.length ; ++i) {

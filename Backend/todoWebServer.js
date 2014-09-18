@@ -27,7 +27,7 @@ function setHeader(request,response){
         "Access-Control-Allow-Origin" : "*",
 		"Access-Control-Allow-Headers" : "Content-Type",
         "Access-Control-Allow-Credentials" : "true",
-        "Content-Type" : "application/json",
+        "Content-Type" : "application/json, application/x-www-form-urlencoded",
         "Access-Control-Allow-Methods" : "GET, PUT, POST, DELETE, OPTIONS"
     });
 }
@@ -168,6 +168,66 @@ app.delete('/', function(request, response) {
 		errorJson(response);
 		return;
 	}
+});
+
+
+app.options('/upload', function(request, response) {
+	setHeader(request, response);
+	var method = request.headers["access-control-request-method"];
+	console.log(method);
+
+	//TODO User Check
+	response.send();
+});
+
+
+app.post('/upload', function(request, response) {
+	
+	fs.readFile(request.body.file, function(error, data) {
+		console.log(__dirname);
+		var filePath = __dirname + "/" + request.body.id + "."+ request.body.extension;
+		console.log(filePath);
+		
+		fs.writeFile(filePath, data, function(err) {
+			if (err) {
+				response.send(err);
+				//response.send(err);
+			} else {
+				/*
+				requestQuery(			
+					"INSERT INTO tbl_weight(id, isMan, weight, language, path) values( ?, ?, ?, ?, ? ) "
+//						+"'" + request.body.id + "',"
+//					 	+ request.body.isMan + ","
+//						+ request.body.weight + ","
+//						+"'" + request.body.language + "',"
+//						+"'" + request.body.path + "');"
+					
+					, [request.body.id, Boolean(request.body.isMan), parseFloat(request.body.weight), request.body.language, request.body.path]
+					,function(error, oResult) {
+						console.log("oResult : ", oResult);
+						var isSuccess =false;
+						
+						if ( oResult != null || oResult != undefined || oResult["affectedRows"] != null) {			
+							if ( oResult["affectedRows"] != null ) 
+								isSuccess = true;
+						}
+						
+						response.send(""+isSuccess);
+					}
+				);
+				
+				//response.send(filePath);
+				//response.json("true");
+				//response.send("true");
+				*/
+			}
+		});
+	});
+
+	//response.redirect('/');
+
+	
+
 });
 
 //Execute Query
