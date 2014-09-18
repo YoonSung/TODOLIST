@@ -107,17 +107,17 @@ var Todo = {
 	},
 
 	showAll: function() {
-		this.eList.className = "";
+		this.eList.className = this.eList.className.split(" ")[0];
 		this.changeFilterStatus(0);
 	},
 	
 	showActive: function() {
-		this.eList.className = "all-active";
+		this.eList.className = this.eList.className + " all-active";
 		this.changeFilterStatus(1);
 	},
 
 	showCompleted: function() {
-		this.eList.className = "all-completed";
+		this.eList.className = this.eList.className + " all-completed";
 		this.changeFilterStatus(2);
 	},
 
@@ -491,12 +491,15 @@ var TodoSpeech = {
 			" 다음" : "next",
 			" 이전" : "prev",
 			" 완료" : "complete",
-			" 삭제" : "delete"
+			" 삭제" : "delete",
+			" 전체 할 일" : "readAll",
+			"전체 할 일" : "readAll"
 		}
 	},
 	eSpeechToggle: null,
 	eMicToggle: null,
 	eDiscription: null,
+	eClose: null,
 
 	recognition: null,
 	utterance: null,
@@ -536,6 +539,7 @@ var TodoSpeech = {
 		this.eMicToggle = document.querySelector("#mic");
 		this.eDiscription = document.querySelector("#speechControl .discription");
 		this.eHeader = document.querySelector("#header");
+		this.eClose = document.querySelector("p.close");
 
 		//Display Speech Toggle Menu
 		this.eSpeechToggle.classList.remove("invisible");
@@ -575,6 +579,11 @@ var TodoSpeech = {
   		this.eMicToggle.addEventListener("click", function(e) {
 			console.log("recognition : ",this.recognition);
   			this.recognition.start();
+  		}.bind(this));
+
+
+  		this.eClose.addEventListener("click", function() {
+  			this.eDiscription.classList.remove("active");
   		}.bind(this));
 	},
 
@@ -723,7 +732,19 @@ var TodoSpeech = {
 	          				this.eHeader.classList.add("speechFocus");
 	          				this.isOnTodoElement = false;
 	          			}
+	          		} else if (this.CONSTANT.COMMAND[sTranscript] === "readAll") {
+	          			var todoList = document.querySelectorAll("#todo-list li:not(.completed) label");
+
+	          			var nLength = todoList.length;
+	          			var sRead = "전체할일 목록은 다음과 같습니다.  ㅡ";
+	          			for (var i = 0 ; i < nLength ; ++i) {
+							sRead += (i+1) +"번 "+todoList[i].innerText+ ".  ";
+	          			}
+
+	          			this.say(sRead);
+	          			return;
 	          		}
+
 	          	
 				} else {
 					this.sMessage += sTranscript;
