@@ -474,6 +474,7 @@ var TodoDrag = {
 		e.stopPropagation(); 
   		e.preventDefault();
 
+		var sType = e.dataTransfer.types[0];
   		var eTarget = e.target;
 
   		if (eTarget.tagName.toLowerCase() === "label") {
@@ -487,7 +488,10 @@ var TodoDrag = {
 
 		//File DnD
 		if (!Util.isUndefinedOrNull(sType) && sType.toLowerCase() === "files") {
-			//TODO
+			var file = e.dataTransfer.files[0];
+			TodoFile.drop(eTarget, file);
+
+			eTarget.classList.remove("fileOver");
 
 		//Not File
 		} else {			
@@ -669,7 +673,6 @@ var TodoSpeech = {
 
 	            //Analyse Command
 	            if (this.CONSTANT.COMMAND.hasOwnProperty(sTranscript) == true) {
-	            	console.log("testestest");
 	            	console.log(this.CONSTANT.COMMAND[sTranscript]);
 
 	            	//When Create Command Request
@@ -795,6 +798,58 @@ var TodoSpeech = {
 	    console.log("sMessage : ", this.sMessage);
 	}
 };
+
+var TodoFile = {
+	CONSTANT: {
+		AUDIO : [
+			"aac",
+			"mp4",
+			"mpeg",
+			"ogg",
+			"wav",
+			"webm"
+		],
+
+		VIDEO : [
+			"mp4",
+			"m4v",
+			"ogg",
+			"ogv",
+			"webm"
+		],
+
+		IMAGE : [
+			"gif",
+			"jpeg",
+			"pjpeg",
+			"png"
+		]
+	},
+	drop: function(eTarget, file) {
+
+		if (Util.isUndefinedOrNull(eTarget) || Util.isUndefinedOrNull(file))
+			return;
+
+		var id = eTarget.dataset.id;
+
+		if (typeof FileReader !== "undefined") {
+
+			var eImg = document.createElement("img");
+			eTarget.querySelector(".view").appendChild(eImg);
+
+			var reader = new FileReader();
+			reader.onload = (function (targetImg) {
+				return function (event) {
+					targetImg.src = event.target.result;
+				};
+			}(eImg));
+			reader.readAsDataURL(file);
+
+			//TODO Video, Audio File
+			//TODO Network Transfer File
+		}
+	}
+}
 
 function init() {
 

@@ -527,6 +527,12 @@ label[for='toggle-all'] {
 	margin-bottom: -1px;
 }
 
+#todo-list li img {
+	display: inline-block;
+	max-width: 502px;
+	margin-left: 45px;
+}
+
 #todo-list.all-active .completed {
 	display: none;
 }
