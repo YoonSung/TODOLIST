@@ -802,52 +802,141 @@ var TodoSpeech = {
 var TodoFile = {
 	CONSTANT: {
 		AUDIO : [
-			"aac",
-			"mp4",
-			"mpeg",
-			"ogg",
-			"wav",
-			"webm"
+			"audio/aac",
+			"audio/mp4",
+			"audio/mpeg",
+			"audio/ogg",
+			"audio/wav",
+			"audio/webm",
+			"audio/x-m4a"
 		],
 
 		VIDEO : [
-			"mp4",
-			"m4v",
-			"ogg",
-			"ogv",
-			"webm"
+			"video/mp4",
+			"video/m4v",
+			"video/ogg",
+			"video/ogv",
+			"video/webm"
 		],
 
 		IMAGE : [
-			"gif",
-			"jpeg",
-			"pjpeg",
-			"png"
+			"image/gif",
+			"image/jpeg",
+			"image/pjpeg",
+			"image/png"
 		]
 	},
+
+	eBg: null,
+	ePercent: null,
+	eProgressbar: null,
+
+	init : function() {
+		this.eBg = document.querySelector("#progressArea");
+		this.ePercent = this.eBg.querySelector(".progress");
+		this.eProgressbar = this.eBg.querySelector(".progressbar");
+	},
+
+	prevImage: function(eTarget, file) {
+		var eImg = document.createElement("img");
+		eTarget.querySelector(".view").appendChild(eImg);
+
+		var reader = new FileReader();
+		reader.onload = (function (targetImg) {
+			return function (event) {
+				targetImg.src = event.target.result;
+			};
+		}(eImg));
+		reader.readAsDataURL(file);
+	},
+
+	prevVideo: function(eTarget, file) {
+
+		var eVideo = document.createElement("video");
+
+		var reader = new FileReader();
+		reader.onload = (function (targetVideo) {
+			return function (event) {
+				targetVideo.src = event.target.result;
+			};
+		}(eVideo));
+		reader.readAsDataURL(file);
+
+		eTarget.querySelector(".view").appendChild(eVideo);
+	},
+
+	prevAudio: function(eTarget, file) {
+		var eAudio = document.createElement("audio");
+
+		var reader = new FileReader();
+		reader.onload = (function (targetAudio) {
+			return function (event) {
+				targetAudio.src = event.target.result;
+			};
+		}(eAudio));
+		reader.readAsDataURL(file);
+
+		eTarget.querySelector(".view").appendChild(eAudio);
+	},
+
 	drop: function(eTarget, file) {
 
 		if (Util.isUndefinedOrNull(eTarget) || Util.isUndefinedOrNull(file))
 			return;
 
-		var id = eTarget.dataset.id;
-
+		//var id = eTarget.dataset.id;
 		if (typeof FileReader !== "undefined") {
 
-			var eImg = document.createElement("img");
-			eTarget.querySelector(".view").appendChild(eImg);
-
-			var reader = new FileReader();
-			reader.onload = (function (targetImg) {
-				return function (event) {
-					targetImg.src = event.target.result;
-				};
-			}(eImg));
-			reader.readAsDataURL(file);
+			if (this.CONSTANT.IMAGE.indexOf(file.type) !== -1) {
+				this.prevImage(eTarget, file);
+			} else if (this.CONSTANT.VIDEO.indexOf(file.type) !== -1) {
+				this.prevVideo(eTarget, file);
+			} else if (this.CONSTANT.AUDIO.indexOf(file.type) !== -1) {
+				this.prevAudio(eTarget, file);
+			} else {
+				console.log("What? : ",file.type);
+			}
 
 			//TODO Video, Audio File
 			//TODO Network Transfer File
 		}
+	},
+
+	upload: function(nId, file) {
+
+		this.progressbar.classList.remove("complete");
+
+		var xhr = new XMLHttpRequest();
+
+		// Update progress bar
+		xhr.upload.addEventListener("progress", function (e) {
+			if (e.lengthComputable) {
+				var nPercent = (e.loaded / e.total) * 100;
+				this.ePercent = nPercent;
+				this.progressbar.style.width = nPercent + "%";
+			} else {
+				console.log("when called this? : ", e);
+				// No data to calculate on
+			}
+		}, false);
+
+		// File uploaded
+		xhr.addEventListener("load", function () {
+			this.progressbar.classList.add("complete");
+			this.eBg.classList.add("off");
+		}, false);
+
+		// Open Connection
+		xhr.open("post", "/upload", true);
+		
+		// Set appropriate headers
+		xhr.setRequestHeader("Content-Type", "multipart/form-data");
+		xhr.setRequestHeader("fileName", file.name);
+		xhr.setRequestHeader("fileType", file.type);
+		xhr.setRequestHeader("id", nId);
+		
+		// Send the file (doh)
+		xhr.send(file);
 	}
 }
 

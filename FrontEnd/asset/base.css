@@ -805,3 +805,63 @@ hr {
 		margin: 130px auto 40px auto;
 	}
 }
+
+/*
+	ProgressArea
+*/
+
+#progressArea {
+	width: 100%;
+	height: 100%;
+	background-color: #1e1e1e;
+	display: inline-block;
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 100;
+	opacity: 0.8;
+}
+
+#progressArea.off {
+	display: none;
+}
+
+#progressArea .progress {
+	color: white;
+	font-size: 50px;
+	left: 50%;
+	letter-spacing: 0.1em;
+	margin: -25px 0 0 -100px;
+	position: absolute;
+	text-align: center;
+	top: 50%;
+	width: 200px;
+}
+
+#progressArea .progressbar {
+  	left: 10%;
+  	position: absolute;
+  	text-align: center;
+  	top: 55%;
+  	right: 10%;
+}
+
+#progressArea .progressbar .bar {
+	-moz-box-shadow: cyan 0 0 10px 1px;
+	-webkit-box-shadow: cyan 0 0 10px 1px;
+	box-shadow: cyan 0 0 10px 1px;
+	-moz-transition: all 300ms;
+	-o-transition: all 300ms;
+	-webkit-transition: all 300ms;
+	transition: all 300ms;
+	background-color: cyan;
+	height: 2px;
+	display: inline-block;
+	width: 20%;
+}
+#progressArea .progressbar .bar.complete {
+	-moz-box-shadow: rgba(255, 0, 0, 0) 0 0 10px 10px;
+	-webkit-box-shadow: rgba(255, 0, 0, 0) 0 0 10px 10px;
+	box-shadow: rgba(255, 0, 0, 0) 0 0 10px 10px;
+}
+
