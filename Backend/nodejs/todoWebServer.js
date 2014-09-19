@@ -182,7 +182,7 @@ app.options('/upload', function(request, response) {
 
 
 app.post('/upload', function(request, response) {
-	
+
 	fs.readFile(request.body.file, function(error, data) {
 		console.log(__dirname);
 		var filePath = __dirname + "/" + request.body.id + "."+ request.body.extension;
@@ -257,7 +257,7 @@ function requestQuery(sql, aInsertValues, callbackFunction) {
 };
 
 //server
-http.createServer(app).listen(8080, function() {
+http.createServer(app).listen(8090, function() {
 	console.log('Server running');
 });
 

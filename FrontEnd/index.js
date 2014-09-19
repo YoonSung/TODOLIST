@@ -315,7 +315,7 @@ var TodoSync = {
 	},
 
 	getAll: function(callback) {
-		this.xhr("GET", "http://localhost:8080/", null, function(aResult) {
+		this.xhr("GET", "http://localhost:8090/", null, function(aResult) {
 			callback(aResult);
 		});
 	},
@@ -323,7 +323,7 @@ var TodoSync = {
 	add: function(sTodo, callback) {
 		this.xhr(
 			"POST", 
-			"http://localhost:8080/", 
+			"http://localhost:8090/", 
 			"todo="+sTodo, 
 			function(oResult) {
 				callback(oResult);
@@ -334,7 +334,7 @@ var TodoSync = {
 	complete: function(id, callback) {
 		this.xhr(
 			"PUT", 
-			"http://localhost:8080/", 
+			"http://localhost:8090/", 
 			"id="+id, 
 			function(oResult) {
 				callback(oResult);
@@ -345,7 +345,7 @@ var TodoSync = {
 	delete: function(id, callback) {
 		this.xhr(
 			"DELETE", 
-			"http://localhost:8080/", 
+			"http://localhost:8090/", 
 			"id="+id, 
 			function(oResult) {
 				callback(oResult);
@@ -356,7 +356,7 @@ var TodoSync = {
 	reorder: function(sourceId, targetId, callback) {
 		this.xhr(
 			"POST", 
-			"http://localhost:8080/reorder", 
+			"http://localhost:8090/reorder", 
 			"sourceId="+sourceId
 			+"&targetId="+targetId, 
 			function(oResult) {

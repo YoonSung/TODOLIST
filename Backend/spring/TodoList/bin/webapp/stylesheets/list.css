@@ -1,0 +1,333 @@
+* {
+ 	font-family: 'NanumGothic';
+	position:relative;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	z-index: 2;
+}
+
+body {
+	padding: 0 auto;
+}
+
+.bgImg {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	background:
+		url(http://oleuanna.co.uk/wp-content/uploads/2012/04/white.jpg)
+		no-repeat;
+	background-size: cover;
+	height: 100%;
+	position: fixed;
+	z-index: 1;
+}
+
+header>h1 {
+	text-align: center;
+	margin: 50px;
+}
+
+div.wrap {
+	width: 500px;
+	margin: auto;
+	margin-top:70px;
+}
+
+#fixedTop {
+	position:fixed;
+	width:100%;
+	top:0;
+	left:0;
+	height:50px;
+	background-color: rgba(191,203,255,0.9);
+	z-index: 3;
+}
+
+#fixedTop > .rightMenu {
+	position:absolute;
+	top:8px;
+	right:30px;
+}
+
+.rightMenu > ul * {
+	display:inline-block;
+	background-repeat:no-repeat;
+	vertical-align: middle;
+}
+
+.rightMenu li {
+	margin-left : 10px;
+}
+
+.rightMenu a {
+	line-height:999px;
+	overflow:hidden;
+}
+
+.m_btnLogout {
+	background-image:url(https://cdn2.iconfinder.com/data/icons/flaticons-stroke/16/logout-1-32.png);
+	background-repeat:no-repeat;
+	width:32px;
+	height:32px;
+}
+
+.formArea {
+	position:absolute;
+	margin: auto;
+	top:-420px;
+	width:100%;
+	margin-bottom:25px;
+	border-radius: 15px;
+	padding: 50px 10px;
+	background-color: rgba(72, 72, 72, 0.4);
+	transition:margin 2s, background 2s;
+	-webkit-transition:margin 2s, background 2s, -webkit-transform 2s; /* Safari */
+	transition-duration: 1s;
+	-webkit-transition-duration: 1s; /* Safari */
+}
+
+.formArea:hover {
+	background-color:rgba(72, 72, 72, 0.9);
+	margin-top:500px;
+}
+
+.formWrapper
+{
+	width:400px;
+	height:100px;
+	margin:auto;
+}
+
+
+.inputArea #title {
+	padding-top: 15px;
+	padding-bottom: 10px;
+	padding-left: 50px;
+	padding-right: 15px;
+	width: 100%;
+	display: inline-block;
+	margin-bottom: 10px;
+	background-image:
+		url(http://rexkirby.com/kirbyandson/images/comment.svg);
+	background-size: 30px 30px;
+	background-repeat: no-repeat;
+	background-position: 10px 8px;
+	color: #025167;
+}
+
+.inputArea textarea {
+	background-image:
+		url(http://rexkirby.com/kirbyandson/images/comment.svg);
+	background-size: 30px 30px;
+	background-repeat: no-repeat;
+	background-position: 10px 8px;
+	padding-top: 15px;
+	padding-bottom: 10px;
+	padding-left: 50px;
+	padding-right: 15px;
+	display: inline-block;
+	color: #025167;
+	width: 100%;
+	resize: none;
+	width: 100%;
+}
+
+.formArea input[type=submit] {
+	width: 100%;
+	height: 100%;
+	background: #7E5E85;
+	transition: background 2s;
+	-webkit-transition: background 2s, -webkit-transform 2s;
+	/* Safari */
+	transition-duration: 1s;
+	-webkit-transition-duration: 1s;
+}
+
+.formArea input[type=submit]:hover {
+	background: #3089ff;
+}
+
+.formArea #submitArea {
+	margin-top: 15px;
+	background-color: #ffffff;
+	height: 100px;
+	display: block;
+}
+
+.upload {
+	position: relative; border-style : solid;
+	border-color: gray;
+	border-width: 1px;
+	color: #000000;
+	padding: 15px;
+	margin: 40px auto;
+	z-index: 10;
+	border-style: solid;
+}
+
+.upload #showTitle
+ {
+ 	margin:8px 0, 10px, 0;
+	color:#452b83;
+	display:inline-block;
+	float:left;
+}
+
+.upload>img {
+	max-width: 100%;
+	border-radius:5px;
+}
+
+.upload .postModify {
+	width:38px;
+	height:38px;
+	line-height:999px;
+	overflow:hidden;
+	display:inline-block;
+	float:right;
+	background-image:url(https://cdn2.iconfinder.com/data/icons/toolbar-icons/512/Pencil-32.png);
+	background-repeat: no-repeat;
+}
+
+.upload .postDel {
+	margin-left:10px;
+	margin-bottom:10px;
+	width:38px;
+	height:38px;
+	line-height:999px;
+	overflow:hidden;
+	display:inline-block;
+	float:right;
+	background-image:url(https://cdn2.iconfinder.com/data/icons/toolbar-icons/512/Trashcan-32.png);
+	background-repeat: no-repeat;
+}
+
+.upload .showContents {
+	clear:both;
+	margin-top: 20px;
+	padding: 20px;
+	margin-bottom: 20px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: gray;
+}
+
+.showComment {
+	width:100%;
+	margin-bottom:40px;
+	vertical-align: middle;
+}
+
+.showComment * {
+	vertical-align: middle;
+}
+
+.showComment:hover {
+	font-weight:700;
+	color:rgba(0,51,51,1);
+}
+
+.showComment > input[type=button] {
+	
+}
+
+.showComment *{
+	width:23px;
+	height:23px;
+	line-height:999px;
+	overflow:hidden;
+	display:inline-block;
+	float:right;
+}
+
+.showComment .cmtDel  {
+	background:url("https://cdn2.iconfinder.com/data/icons/toolbar-icons/512/Cancel-20.png") no-repeat;
+}
+
+.showComment .cmtModify {
+	background:url("	https://cdn2.iconfinder.com/data/icons/toolbar-icons/512/Pencil-20.png") no-repeat;	
+}
+
+
+.showComment cmdModify {
+	
+}
+
+
+.comment {
+	padding:8px;
+	width:100%;
+	height:35px;
+	resize:none;
+	background-color:rgba(72, 72, 72, 0.1);
+	
+	color: #000000;
+}
+
+.commentControl {
+	
+}
+
+.commentTitle {
+	display:block;
+	overflow:auto;
+	margin-bottom:20px;
+}
+
+.commentTitle > p {
+	display:inline-block;
+	float:left;
+}
+
+.commentTitle >p:nth-of-type(1) {
+	width:24px;
+	height:24px;
+	background:url("https://cdn2.iconfinder.com/data/icons/color-svg-cloud-icons/512/cloud_more-24.png") no-repeat;
+	line-height:999px;
+	overflow: hidden;
+	display: inline-block;
+	float: left;
+	margin-right:5px;
+}
+
+.commentControl {
+	width:32px;
+	height:32px;
+	background:url("https://cdn3.iconfinder.com/data/icons/medicon/512/more_format_indent_users_plus-32.png") no-repeat;
+	line-height:999px;
+	overflow:hidden;
+	display:inline-block;
+	float:right;
+}
+
+.commentBody {
+	display:none;
+}
+
+.commentWrite {
+	display: inline;
+	padding:50px;
+}
+
+.commentWrite label {
+	margin:-50px;
+	margin-bottom: 15px;
+}
+
+.commentWrite textarea {
+	float:left;
+	width:85%;
+	height:68px;
+}
+.commentWrite input[type=submit] {
+	width:68px;
+	height:68px;
+	line-height:999px;
+	overflow:hidden;
+	display:inline-block;
+	float:left;
+	background:url("https://cdn3.iconfinder.com/data/icons/keyboard/100/237271-Keyboard_enter-64.png") no-repeat;
+}

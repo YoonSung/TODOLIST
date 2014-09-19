@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<comment>application-properties</comment>
+
+	<!-- Database -->
+    <entry key="database.driverClassName">com.mysql.jdbc.Driver</entry>
+	<entry key="database.url">jdbc:mysql://54.178.137.153:3306/html5</entry>
+    <entry key="database.username">yoon</entry>
+    <entry key="database.password">sung</entry>
+</properties>
